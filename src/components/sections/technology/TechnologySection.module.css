@@ -1,0 +1,253 @@
+.map {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 960px) {
+  .map {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: var(--space-10);
+    align-items: stretch;
+  }
+}
+
+/* ---------- The stack: layered plates joined by a spine ---------- */
+.stack {
+  position: relative;
+  display: grid;
+  gap: var(--space-2);
+  padding-left: var(--space-6);
+}
+
+.stack::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 1.4rem;
+  bottom: 1.4rem;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--accent), var(--border-strong) 40%, var(--signal));
+}
+
+.plate {
+  position: relative;
+  width: 100%;
+  text-align: left;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border);
+  color: var(--text-muted);
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out);
+}
+
+/* Node on the spine. */
+.plate::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--space-6) * -1 + 3px);
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin-top: -4.5px;
+  border-radius: 50%;
+  background: var(--bg-elev);
+  box-shadow: 0 0 0 1px var(--border-strong);
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+/* Connector from the node to the plate. */
+.plate::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--space-6) * -1 + 12px);
+  top: 50%;
+  width: calc(var(--space-6) - 12px);
+  height: 1px;
+  background: var(--border-strong);
+}
+
+.plate:hover {
+  color: var(--text);
+}
+
+.plate[aria-selected='true'] {
+  color: var(--text);
+  background: linear-gradient(100deg, var(--accent-soft), var(--surface) 60%);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent),
+    0 18px 40px -24px var(--accent-glow);
+  transform: translateX(8px);
+}
+
+.plate[aria-selected='true']::before {
+  background: var(--accent);
+  box-shadow:
+    0 0 0 4px var(--accent-soft),
+    0 0 14px var(--accent);
+}
+
+.plate[aria-selected='true']::after {
+  background: var(--accent);
+}
+
+.plateInner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.plateIndex {
+  width: 1.5rem;
+  color: var(--text-subtle);
+}
+
+.plateIcon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--accent-text);
+}
+
+.plateName {
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+
+.plateCount {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-subtle);
+}
+
+/* ---------- Detail panel ---------- */
+.panel {
+  height: 100%;
+  border-radius: var(--radius-xl);
+}
+
+.panel:not([hidden]) {
+  display: block;
+}
+
+.detail {
+  height: 100%;
+  display: grid;
+  align-content: start;
+  gap: var(--space-8);
+  padding: clamp(var(--space-6), 3vw, var(--space-10));
+  border-radius: var(--radius-xl);
+  background: radial-gradient(70% 60% at 100% 0%, var(--accent-soft), transparent 70%), var(--bg);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.detailHead {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.detailLabel {
+  color: var(--accent-text);
+}
+
+.detailTitle {
+  font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+  letter-spacing: var(--tracking-display);
+}
+
+.detailText {
+  color: var(--text-muted);
+  max-width: 32rem;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .tiles {
+    grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+  }
+}
+
+/* Periodic-table style element tile. */
+.tile {
+  position: relative;
+  display: grid;
+  gap: var(--space-1);
+  padding: calc(var(--space-4) + 1.4rem) var(--space-4) var(--space-4);
+  min-height: 9.5rem;
+  align-content: end;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  animation: tileIn 520ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 70ms);
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.tile:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 60%, transparent),
+    0 14px 30px -18px var(--accent-glow);
+}
+
+.atomic {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-4);
+  color: var(--text-subtle);
+}
+
+.symbol {
+  font-size: clamp(2rem, 1.6rem + 1.4vw, 2.75rem);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--text), var(--accent-text));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: var(--space-2);
+}
+
+.techName {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1.25;
+}
+
+.techNote {
+  font-size: var(--fs-xs);
+  color: var(--text-subtle);
+  line-height: 1.4;
+}
+
+@keyframes tileIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+
+@media (max-width: 959px) {
+  .plate[aria-selected='true'] {
+    transform: none;
+  }
+}

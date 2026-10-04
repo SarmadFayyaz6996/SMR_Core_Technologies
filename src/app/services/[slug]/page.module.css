@@ -1,0 +1,132 @@
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.layout {
+  display: grid;
+  gap: var(--space-12);
+}
+
+@media (min-width: 960px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+    gap: var(--space-16);
+  }
+}
+
+.heading {
+  font-size: var(--fs-h3);
+  margin-bottom: var(--space-6);
+}
+
+.deliverables {
+  display: grid;
+  border-top: 1px solid var(--border);
+}
+
+.deliverables li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding-block: var(--space-5);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--fs-lead);
+}
+
+.check {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+.aside {
+  align-self: start;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elev);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.asideTitle {
+  color: var(--text-subtle);
+  font-weight: 500;
+  margin-bottom: var(--space-4);
+}
+
+.tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tech li {
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  font-size: var(--fs-small);
+}
+
+.related {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (min-width: 800px) {
+  .related {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.relatedCard {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+  height: 100%;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border);
+  color: var(--accent-text);
+  transition:
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+}
+
+.relatedCard:hover {
+  transform: translateY(-3px);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+.relatedTitle {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.relatedText {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}
+
+.relatedArrow {
+  position: absolute;
+  top: var(--space-6);
+  right: var(--space-6);
+  color: var(--text-subtle);
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
+}
+
+.relatedCard:hover .relatedArrow {
+  color: var(--accent-text);
+  transform: translate(2px, -2px);
+}

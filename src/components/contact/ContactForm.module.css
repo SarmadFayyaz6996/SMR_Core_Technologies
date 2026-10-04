@@ -1,0 +1,385 @@
+.form {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.row {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+}
+
+.field {
+  position: relative;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  color: var(--text);
+  padding: 0;
+}
+
+.required {
+  color: var(--accent-text);
+}
+
+.optional {
+  margin-left: auto;
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--text-subtle);
+}
+
+.input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.75rem 0.95rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  font-size: 1rem; /* ≥16px prevents iOS zoom on focus */
+  color: var(--text);
+  transition:
+    box-shadow var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out);
+}
+
+.input::placeholder {
+  color: var(--text-subtle);
+  opacity: 0.8;
+}
+
+.input:hover {
+  box-shadow: inset 0 0 0 1px var(--text-subtle);
+}
+
+/* Focus: accent ring that grows in, instead of the default outline. */
+.input:focus-visible {
+  outline: none;
+  background: var(--bg-elev);
+  box-shadow:
+    inset 0 0 0 1px var(--accent),
+    0 0 0 4px var(--accent-soft);
+}
+
+.hasError .input {
+  box-shadow: inset 0 0 0 1px var(--danger);
+}
+
+.hasError .input:focus-visible {
+  box-shadow:
+    inset 0 0 0 1px var(--danger),
+    0 0 0 4px color-mix(in srgb, var(--danger) 18%, transparent);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 9rem;
+  line-height: 1.55;
+}
+
+.count {
+  justify-self: end;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-subtle);
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-small);
+  color: var(--danger);
+  animation: errorIn var(--dur-base) var(--ease-out);
+}
+
+/* ---------- Chip radio groups ---------- */
+.fieldset {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  position: relative;
+  cursor: pointer;
+}
+
+.chip input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.chip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
+}
+
+.chip:hover span {
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--text-subtle);
+}
+
+.chip input:checked + span {
+  background: var(--accent-strong);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px var(--accent-strong);
+}
+
+.chip input:focus-visible + span {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.fieldset[aria-invalid='true'] .chip span {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--danger) 55%, transparent);
+}
+
+/* ---------- Consent ---------- */
+.consentWrap {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.consent {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.consent input {
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkbox {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.1rem;
+  border-radius: 5px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  color: transparent;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.consent input:checked + .checkbox {
+  background: var(--accent-strong);
+  box-shadow: none;
+  color: #fff;
+}
+
+.consent input:focus-visible + .checkbox {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.consent input[aria-invalid='true'] + .checkbox {
+  box-shadow: inset 0 0 0 1px var(--danger);
+}
+
+.link {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+}
+
+.link:hover {
+  text-decoration-color: var(--accent);
+}
+
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ---------- Actions & states ---------- */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-6);
+  padding-top: var(--space-2);
+}
+
+@media (max-width: 479px) {
+  .actions > button {
+    width: 100%;
+  }
+}
+
+.note {
+  font-size: var(--fs-small);
+  color: var(--text-subtle);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgb(255 255 255 / 0.35);
+  border-top-color: #fff;
+  animation: spin 0.7s linear infinite;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--danger) 40%, transparent);
+  color: var(--text);
+  font-size: var(--fs-small);
+}
+
+.banner svg {
+  flex: none;
+  color: var(--danger);
+}
+
+.success {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-5);
+  padding-block: var(--space-6);
+  animation: errorIn var(--dur-slow) var(--ease-out);
+}
+
+.successIcon {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--success) 16%, transparent);
+  color: var(--success);
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--success) 7%, transparent);
+  animation: pop 600ms var(--ease-out);
+}
+
+.successIcon svg path {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: draw 500ms var(--ease-out) 250ms forwards;
+}
+
+.successTitle {
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  letter-spacing: var(--tracking-heading);
+}
+
+.successText {
+  color: var(--text-muted);
+  max-width: 32rem;
+}
+
+.successText strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.nextSteps {
+  display: grid;
+  gap: var(--space-3);
+  counter-reset: step;
+  margin-bottom: var(--space-2);
+}
+
+.nextSteps li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  counter-increment: step;
+}
+
+.nextSteps li::before {
+  content: counter(step, decimal-leading-zero);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--accent-text);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes errorIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}

@@ -1,0 +1,135 @@
+.button {
+  --btn-h: 2.75rem;
+  --btn-px: 1.15rem;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--btn-h);
+  padding-inline: var(--btn-px);
+  border-radius: var(--radius-pill);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.sm {
+  --btn-h: 2.25rem;
+  --btn-px: 0.95rem;
+  font-size: var(--fs-small);
+}
+
+.lg {
+  --btn-h: 3.25rem;
+  --btn-px: 1.6rem;
+  font-size: 1rem;
+}
+
+.block {
+  width: 100%;
+}
+
+/* Variants */
+.primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  box-shadow: 0 0 0 1px var(--btn-primary-bg);
+}
+
+.primary:hover {
+  box-shadow:
+    0 0 0 1px var(--btn-primary-bg),
+    0 10px 40px -8px var(--accent-glow);
+}
+
+/* Light sweep on hover — subtle signature shimmer. */
+.primary::before,
+.accent::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgb(255 255 255 / 0.28) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.9s var(--ease-out);
+}
+
+.primary::before {
+  background: linear-gradient(105deg, transparent 30%, var(--accent-soft) 50%, transparent 70%);
+}
+
+.primary:hover::before,
+.accent:hover::before {
+  transform: translateX(120%);
+}
+
+.accent {
+  background: var(--accent-strong);
+  color: #fff;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    0 0 0 1px var(--accent-strong);
+}
+
+.accent:hover {
+  background: var(--accent);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    0 0 0 1px var(--accent),
+    0 12px 40px -10px var(--accent-glow);
+}
+
+.secondary {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+.secondary:hover {
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1px var(--text-subtle);
+}
+
+.ghost {
+  color: var(--text-muted);
+  padding-inline: var(--space-2);
+}
+
+.ghost:hover {
+  color: var(--text);
+}
+
+.icon {
+  flex: none;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.button:hover .icon {
+  transform: translateX(3px);
+}
+
+.button[aria-disabled='true'],
+.button:disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}

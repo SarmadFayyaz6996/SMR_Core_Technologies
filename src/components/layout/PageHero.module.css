@@ -1,0 +1,102 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin-top: calc(var(--nav-h) * -1);
+  padding-top: calc(var(--nav-h) + clamp(var(--space-12), 7vw, var(--space-20)));
+  padding-bottom: clamp(var(--space-12), 6vw, var(--space-16));
+  border-bottom: 1px solid var(--border);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(900px 420px at 80% -10%, var(--accent-soft), transparent 70%);
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  mask-image: radial-gradient(ellipse 70% 80% at 70% 0%, #000, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 80% at 70% 0%, #000, transparent 70%);
+}
+
+.inner {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-5);
+}
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-size: var(--fs-small);
+  color: var(--text-subtle);
+  margin-bottom: var(--space-4);
+}
+
+.crumbs li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.crumbs li + li::before {
+  content: '/';
+  color: var(--border-strong);
+}
+
+.crumbs a {
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.crumbs a:hover {
+  color: var(--text);
+}
+
+.crumbs [aria-current] {
+  color: var(--text-muted);
+}
+
+.eyebrow {
+  color: var(--accent-text);
+}
+
+.title {
+  font-size: var(--fs-h1);
+  line-height: 1.04;
+  letter-spacing: var(--tracking-display);
+  max-width: 52rem;
+}
+
+.lead {
+  font-size: var(--fs-lead);
+  color: var(--text-muted);
+  max-width: 40rem;
+}
+
+/* Above-the-fold entrance is pure CSS (no JS dependency) so it never delays LCP. */
+.eyebrow,
+.title,
+.lead {
+  animation: heroIn 600ms var(--ease-out) both;
+}
+
+.title {
+  animation-delay: 60ms;
+}
+
+.lead {
+  animation-delay: 120ms;
+}
+
+@keyframes heroIn {
+  from {
+    opacity: 0.4;
+    translate: 0 10px;
+  }
+}

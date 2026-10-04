@@ -1,0 +1,392 @@
+.visual {
+  --px: 0;
+  --py: 0;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 640px;
+  margin-inline: auto;
+}
+
+.layerBack {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(calc(var(--px) * -8px), calc(var(--py) * -8px), 0);
+  transition: transform 600ms var(--ease-out);
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ---------- Ambient ---------- */
+.glow {
+  animation: breathe 7s var(--ease-in-out) infinite;
+  transform-origin: 300px 300px;
+}
+
+.orbit {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+
+.orbitDashed {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1;
+  stroke-dasharray: 2 7;
+}
+
+.orbitDot {
+  fill: var(--text-subtle);
+}
+
+.orbitDotSignal {
+  fill: var(--signal);
+}
+
+.orbitSlow,
+.orbitFast {
+  transform-origin: 300px 300px;
+}
+
+.orbitSlow {
+  animation: spin 80s linear infinite;
+}
+
+.orbitFast {
+  animation: spin 36s linear infinite reverse;
+}
+
+/* ---------- Traces ---------- */
+.traceBase {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+}
+
+.traceFlow {
+  fill: none;
+  stroke: url(#hv-trace);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 14 220;
+  stroke-dashoffset: 234;
+  opacity: 0.85;
+  animation: flow 3.6s linear infinite;
+  animation-delay: calc(var(--i) * -0.6s);
+}
+
+.packet {
+  fill: var(--signal);
+  filter: drop-shadow(0 0 4px var(--signal));
+}
+
+/* ---------- Core ---------- */
+.pins line {
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.core {
+  stroke: var(--border-strong);
+  stroke-width: 1;
+  filter: drop-shadow(0 20px 40px rgb(0 0 0 / 0.35));
+}
+
+.coreInner {
+  fill: none;
+  stroke: var(--border);
+  stroke-dasharray: 3 4;
+}
+
+.coreChip {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 12px var(--accent-glow));
+  animation: chip 4s var(--ease-in-out) infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.pulse {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
+  opacity: 0;
+  transform-origin: 300px 300px;
+  animation: pulse 3.2s var(--ease-out) infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.coreLabel {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-anchor: middle;
+  fill: var(--text);
+}
+
+.coreMeta {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  text-anchor: middle;
+  fill: var(--success);
+}
+
+/* ---------- Module nodes ---------- */
+.nodeBox {
+  fill: var(--surface);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+  animation: nodeActive 9s var(--ease-in-out) infinite;
+  animation-delay: calc(var(--i) * 1.5s);
+}
+
+.nodeIconBg {
+  fill: var(--surface-2);
+}
+
+.nodeIcon {
+  color: var(--accent-text);
+}
+
+.nodeLabel {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  fill: var(--text);
+}
+
+.nodeMeta {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  fill: var(--text-subtle);
+}
+
+.annotation {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  fill: var(--text-subtle);
+}
+
+/* ---------- Floating panels ---------- */
+.codePanel,
+.deployPanel {
+  position: absolute;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-mono);
+  transition: transform 600ms var(--ease-out);
+}
+
+.codePanel {
+  left: -6%;
+  top: 1%;
+  width: 41%;
+  transform: translate3d(calc(var(--px) * 14px), calc(var(--py) * 14px), 0);
+  animation: float 9s var(--ease-in-out) infinite;
+}
+
+.deployPanel {
+  right: -6%;
+  top: 76%;
+  width: 34%;
+  padding: 0.75rem 0.85rem;
+  transform: translate3d(calc(var(--px) * 18px), calc(var(--py) * 18px), 0);
+  animation: float 10s var(--ease-in-out) infinite -4s;
+}
+
+.panelBar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.panelBar span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--surface-3);
+}
+
+.panelBar em {
+  margin-left: 0.4rem;
+  font-style: normal;
+  font-size: 0.625rem;
+  color: var(--text-subtle);
+}
+
+.code {
+  margin: 0;
+  padding: 0.7rem 0.8rem 0.8rem;
+  font-size: clamp(0.5rem, 0.35rem + 0.5vw, 0.7rem);
+  line-height: 1.65;
+  color: var(--text-muted);
+  white-space: pre;
+  overflow: hidden;
+}
+
+.kw {
+  color: var(--accent-text);
+}
+
+.fn {
+  color: var(--signal);
+}
+
+.str {
+  color: var(--success);
+}
+
+.deployHead {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: clamp(0.5rem, 0.4rem + 0.35vw, 0.65rem);
+  color: var(--text-muted);
+}
+
+.deployDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
+}
+
+.deployOk {
+  margin-left: auto;
+  color: var(--success);
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 2.6rem;
+  margin-block: 0.65rem;
+}
+
+.bars span {
+  flex: 1;
+  height: var(--h);
+  border-radius: 2px;
+  background: linear-gradient(to top, var(--accent-soft), var(--accent));
+  transform-origin: bottom;
+  animation: bar 4s var(--ease-in-out) infinite;
+  animation-delay: calc(var(--i) * -0.4s);
+}
+
+.deployFoot {
+  display: flex;
+  justify-content: space-between;
+  font-size: clamp(0.5rem, 0.4rem + 0.35vw, 0.65rem);
+  color: var(--text-subtle);
+}
+
+.deployFoot strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Small screens: one floating panel only, tucked into the empty top-right corner. */
+@media (max-width: 640px) {
+  .codePanel {
+    display: none;
+  }
+
+  .deployPanel {
+    right: 0;
+    top: 0;
+    width: 40%;
+    padding: 0.55rem 0.65rem;
+  }
+
+  .bars {
+    height: 1.6rem;
+    margin-block: 0.4rem;
+  }
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+@keyframes breathe {
+  50% {
+    transform: scale(1.06);
+    opacity: 0.8;
+  }
+}
+
+@keyframes chip {
+  50% {
+    transform: scale(0.88) rotate(45deg);
+  }
+}
+
+@keyframes nodeActive {
+  0%,
+  12%,
+  100% {
+    stroke: var(--border-strong);
+  }
+  5% {
+    stroke: var(--accent);
+  }
+}
+
+@keyframes float {
+  50% {
+    translate: 0 -8px;
+  }
+}
+
+@keyframes bar {
+  50% {
+    transform: scaleY(0.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .packet,
+  .pulse,
+  .traceFlow {
+    display: none;
+  }
+}

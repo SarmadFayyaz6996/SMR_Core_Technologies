@@ -1,0 +1,13 @@
+.study {
+  display: grid;
+  gap: var(--space-6);
+  padding-block: clamp(var(--space-16), 8vw, var(--space-24));
+}
+
+.study + .study {
+  border-top: 1px solid var(--border);
+}
+
+.index {
+  color: var(--text-subtle);
+}

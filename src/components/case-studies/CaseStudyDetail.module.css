@@ -1,0 +1,129 @@
+.detail {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.header {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+}
+
+.name {
+  font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+  letter-spacing: var(--tracking-display);
+  line-height: 1.1;
+}
+
+.tagline {
+  font-size: var(--fs-lead);
+  color: var(--text-muted);
+}
+
+.category {
+  color: var(--accent-text);
+}
+
+.visuals {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (min-width: 860px) {
+  .visuals {
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    align-items: stretch;
+  }
+}
+
+.facts {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 860px) {
+  .facts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-8);
+  }
+}
+
+.facts > div {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.facts dt {
+  color: var(--text-subtle);
+}
+
+.facts dd {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}
+
+.stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.stack li {
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1px var(--border);
+  color: var(--text);
+  font-size: var(--fs-small);
+}
+
+.metrics {
+  position: relative;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(80% 140% at 0% 0%, var(--accent-soft), transparent 60%), var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.metricsBadge {
+  margin-bottom: var(--space-5);
+}
+
+.metricList {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .metricList {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.metricList li {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.metricList strong {
+  font-size: clamp(2rem, 1.5rem + 1.8vw, 3rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.metricList span {
+  color: var(--text-muted);
+  font-size: var(--fs-small);
+}

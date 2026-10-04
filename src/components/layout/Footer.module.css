@@ -1,0 +1,164 @@
+.footer {
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  background: var(--bg-elev);
+  padding-top: clamp(var(--space-16), 8vw, var(--space-24));
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+}
+
+.top {
+  display: grid;
+  gap: var(--space-12);
+  padding-bottom: var(--space-16);
+}
+
+@media (min-width: 900px) {
+  .top {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  }
+}
+
+.brand {
+  display: grid;
+  align-content: start;
+  gap: var(--space-5);
+  max-width: 24rem;
+}
+
+.brandLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  width: fit-content;
+}
+
+.brandLink svg rect:last-child {
+  fill: var(--accent);
+}
+
+.tagline {
+  font-size: var(--fs-lead);
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.email {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: fit-content;
+  color: var(--text);
+  font-size: var(--fs-small);
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 2px;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.email:hover {
+  border-color: var(--accent);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-10) var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .columns {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.colTitle {
+  color: var(--text-subtle);
+  font-weight: 500;
+  margin-bottom: var(--space-4);
+}
+
+.colLinks {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.link {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.link:hover {
+  color: var(--text);
+}
+
+.bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-8);
+  padding-block: var(--space-6);
+  border-top: 1px solid var(--border);
+}
+
+.copy {
+  font-size: var(--fs-small);
+  color: var(--text-subtle);
+  margin-right: auto;
+}
+
+.legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+}
+
+.socials {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.social {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  box-shadow: inset 0 0 0 1px var(--border);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+}
+
+.social:hover {
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  transform: translateY(-2px);
+}
+
+/* Oversized outlined wordmark bleeding off the bottom edge. */
+.wordmark {
+  font-size: clamp(5rem, 19vw, 18rem);
+  font-weight: 700;
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  text-align: center;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--border-strong);
+  margin-top: var(--space-6);
+  margin-bottom: -0.12em;
+  user-select: none;
+  background: linear-gradient(to bottom, var(--surface-2), transparent 85%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}

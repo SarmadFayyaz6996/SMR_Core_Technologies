@@ -1,0 +1,94 @@
+.layout {
+  display: grid;
+  gap: var(--space-10);
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+    gap: var(--space-16);
+    align-items: start;
+  }
+
+  .aside {
+    position: sticky;
+    top: calc(var(--nav-h-compact) + var(--space-8));
+  }
+}
+
+.aside {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.asideTitle {
+  font-size: var(--fs-h3);
+}
+
+.steps {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.steps li {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.steps li > span {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  color: var(--accent-text);
+}
+
+.steps h3 {
+  font-size: 1rem;
+  margin-bottom: var(--space-1);
+}
+
+.steps p {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}
+
+.direct {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border);
+  color: var(--text-subtle);
+}
+
+.email {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: fit-content;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--text);
+  border-bottom: 1px solid var(--border-strong);
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.email:hover {
+  border-color: var(--accent);
+}
+
+.formCard {
+  padding: clamp(var(--space-6), 4vw, var(--space-10));
+  border-radius: var(--radius-xl);
+  background: var(--bg-elev);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+@media (max-width: 479px) {
+  .formCard {
+    margin-inline: calc(var(--gutter) * -0.5);
+  }
+}

@@ -1,0 +1,114 @@
+.section {
+  overflow: hidden;
+}
+
+.layout {
+  display: grid;
+  gap: var(--space-12);
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: var(--space-20);
+    align-items: start;
+  }
+}
+
+.statement {
+  position: relative;
+  display: grid;
+  gap: var(--space-6);
+}
+
+.eyebrow {
+  color: var(--text-muted);
+}
+
+.eyebrow span {
+  color: var(--accent-text);
+  margin-right: var(--space-2);
+}
+
+.title {
+  position: relative;
+  z-index: 1;
+  font-size: var(--fs-h1);
+  line-height: 1.04;
+  letter-spacing: var(--tracking-display);
+}
+
+.title em {
+  font-style: normal;
+  background: linear-gradient(100deg, var(--accent-text), var(--signal));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Oversized brand mark as a quiet watermark behind the statement. */
+.mark {
+  position: absolute;
+  right: 0;
+  top: -4.5rem;
+  color: var(--border-strong);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.mark rect:last-child {
+  fill: var(--accent-soft);
+}
+
+@media (max-width: 640px) {
+  .mark {
+    width: 160px;
+    height: 160px;
+    right: -3rem;
+  }
+}
+
+.body {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.lead {
+  font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+.text {
+  color: var(--text-muted);
+  font-size: var(--fs-lead);
+}
+
+.values {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+.values li {
+  display: grid;
+  gap: var(--space-1);
+  padding-left: var(--space-5);
+  border-left: 1px solid var(--border-strong);
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+
+.values li:hover {
+  border-color: var(--accent);
+}
+
+.values h3 {
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.values p {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}

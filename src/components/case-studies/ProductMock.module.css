@@ -1,0 +1,330 @@
+.window {
+  margin: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.chrome {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  height: 2.25rem;
+  padding-inline: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.dots {
+  display: flex;
+  gap: 6px;
+}
+
+.dots i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--surface-3);
+}
+
+.url {
+  flex: 1;
+  max-width: 16rem;
+  margin-inline: auto;
+  padding: 0.15rem 0.75rem;
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-align: center;
+  color: var(--text-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  min-height: 15.5rem;
+}
+
+.sidebar {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 0.6rem;
+  padding-block: var(--space-4);
+  border-right: 1px solid var(--border);
+  background: var(--bg-elev);
+}
+
+.brandDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, var(--accent), var(--signal));
+  margin-bottom: 0.4rem;
+}
+
+.navItem {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 6px;
+  color: var(--text-subtle);
+}
+
+.navItem[data-active] {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+.main {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.head strong {
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pill {
+  padding: 0.12rem 0.5rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.62rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.pill[data-tone='accent'] {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+.pill[data-tone='signal'] {
+  background: var(--signal-soft);
+  color: var(--signal);
+}
+
+.pill[data-tone='success'] {
+  background: color-mix(in srgb, var(--success) 14%, transparent);
+  color: var(--success);
+}
+
+/* ---------- Workflow ---------- */
+.flow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.flowStep {
+  position: relative;
+  padding: 0.45rem 0.3rem;
+  border-radius: 6px;
+  text-align: center;
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1px var(--border);
+  font-size: 0.62rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: stepActive 6s infinite;
+  animation-delay: calc(var(--i) * 1.5s);
+}
+
+.rows {
+  display: grid;
+  gap: 1px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--border);
+}
+
+.rows li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0.5rem 0.65rem;
+  background: var(--surface);
+}
+
+.rowTitle {
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Clinical calendar ---------- */
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  min-height: 11rem;
+}
+
+.calCol {
+  position: relative;
+  border-radius: 8px;
+  background: repeating-linear-gradient(to bottom, var(--surface-2) 0 1px, transparent 1px 22px);
+  box-shadow: inset 0 0 0 1px var(--border);
+  padding-top: 1.6rem;
+}
+
+.calHead {
+  position: absolute;
+  top: 0.4rem;
+  left: 0.5rem;
+  font-size: 0.62rem;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.appt {
+  position: absolute;
+  left: 0.35rem;
+  right: 0.35rem;
+  top: calc(1.6rem + var(--top) * 0.8);
+  height: var(--h);
+  border-radius: 5px;
+  background: var(--accent-soft);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.appt[data-tone='signal'] {
+  background: var(--signal-soft);
+  box-shadow: inset 2px 0 0 var(--signal);
+}
+
+/* ---------- Commerce ---------- */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.kpi {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  background: var(--surface-2);
+  min-width: 0;
+}
+
+.kpi span {
+  font-size: 0.62rem;
+  white-space: nowrap;
+}
+
+.kpi strong {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.meter {
+  flex: none;
+  width: 40%;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--accent) var(--v), var(--surface-3) var(--v));
+}
+
+.meter[data-low] {
+  background: linear-gradient(to right, var(--danger) var(--v), var(--surface-3) var(--v));
+}
+
+/* ---------- Analytics / migration ---------- */
+.progress {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.progress span {
+  display: block;
+  height: 100%;
+  width: var(--v);
+  border-radius: inherit;
+  background: linear-gradient(to right, var(--accent), var(--signal));
+}
+
+.barsChart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 7.5rem;
+  padding: var(--space-3);
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.barsChart span {
+  flex: 1;
+  height: var(--h);
+  border-radius: 3px 3px 1px 1px;
+  background: var(--surface-3);
+}
+
+.barsChart span[data-new] {
+  background: linear-gradient(to top, var(--accent-strong), var(--accent));
+}
+
+.legend {
+  display: flex;
+  gap: var(--space-4);
+  font-size: 0.62rem;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.legend span::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--surface-3);
+}
+
+.legend [data-tone='accent']::before {
+  background: var(--accent);
+}
+
+@keyframes stepActive {
+  0%,
+  20%,
+  100% {
+    box-shadow: inset 0 0 0 1px var(--border);
+    color: var(--text-muted);
+  }
+  8% {
+    box-shadow: inset 0 0 0 1px var(--accent);
+    color: var(--text);
+  }
+}

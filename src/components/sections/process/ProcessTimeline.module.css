@@ -1,0 +1,201 @@
+.timeline {
+  --progress: 0;
+  display: grid;
+  gap: var(--space-10);
+}
+
+@media (min-width: 960px) {
+  .timeline {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: var(--space-16);
+    align-items: start;
+  }
+}
+
+/* ---------- Sticky counter (desktop) ---------- */
+.sticky {
+  display: none;
+}
+
+@media (min-width: 960px) {
+  .sticky {
+    position: sticky;
+    top: calc(50vh - 8rem);
+    display: grid;
+    gap: var(--space-4);
+  }
+}
+
+.counter {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: clamp(6rem, 3rem + 7vw, 10rem);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 1;
+}
+
+.digits {
+  display: grid;
+  height: 1em;
+  overflow: hidden;
+}
+
+/* Digits stack in one cell; each slides by its offset from the active step. */
+.digits span {
+  grid-area: 1 / 1;
+  height: 1em;
+  transform: translateY(calc((var(--o) - var(--active)) * 100%));
+  transition: transform 700ms var(--ease-out);
+  /* Gradient per digit: background-clip:text ignores transformed children. */
+  background: linear-gradient(180deg, var(--text), var(--text-subtle));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.total {
+  font-size: 0.18em;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text-subtle);
+  margin-top: 0.8em;
+}
+
+.currentName {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--accent-text);
+}
+
+.bar {
+  height: 2px;
+  max-width: 18rem;
+  border-radius: 2px;
+  background: var(--border-strong);
+  overflow: hidden;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(to right, var(--accent), var(--signal));
+  transform: scaleX(var(--progress));
+  transform-origin: left;
+}
+
+/* ---------- Steps with filling spine ---------- */
+.steps {
+  position: relative;
+  display: grid;
+  gap: clamp(var(--space-10), 6vw, var(--space-16));
+  padding-left: clamp(3.25rem, 6vw, 4.5rem);
+}
+
+.steps::before,
+.steps::after {
+  content: '';
+  position: absolute;
+  left: 1rem;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 1px;
+}
+
+.steps::before {
+  background: var(--border-strong);
+}
+
+.steps::after {
+  background: linear-gradient(to bottom, var(--accent), var(--signal));
+  transform: scaleY(var(--progress));
+  transform-origin: top;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.step {
+  position: relative;
+  display: grid;
+  --step-text: var(--text-subtle);
+  --step-muted: var(--text-subtle);
+}
+
+.step.reached {
+  --step-text: var(--text);
+  --step-muted: var(--text-muted);
+}
+
+.step .title,
+.step .description,
+.step .outputs li {
+  transition: color var(--dur-slow) var(--ease-out);
+}
+
+.index {
+  position: absolute;
+  left: calc(clamp(3.25rem, 6vw, 4.5rem) * -1 + 1rem);
+  top: 0.15rem;
+  translate: -50% 0;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  color: var(--text-subtle);
+  font-size: 0.65rem;
+  z-index: 1;
+  transition:
+    box-shadow var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out);
+}
+
+.reached .index {
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.current .index {
+  background: var(--accent-strong);
+  color: #fff;
+  box-shadow:
+    0 0 0 5px var(--accent-soft),
+    0 0 20px var(--accent-glow);
+}
+
+.body {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.title {
+  color: var(--step-text);
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem);
+  letter-spacing: var(--tracking-display);
+}
+
+.description {
+  color: var(--step-muted);
+  font-size: var(--fs-lead);
+  max-width: 32rem;
+}
+
+.outputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.outputs li {
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  box-shadow: inset 0 0 0 1px var(--border);
+  font-size: var(--fs-xs);
+  color: var(--step-muted);
+}

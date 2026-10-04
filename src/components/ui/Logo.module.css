@@ -1,0 +1,55 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--text);
+  border-radius: var(--radius-sm);
+}
+
+.mark {
+  flex: none;
+}
+
+.core {
+  fill: var(--accent);
+  transform-origin: 17px 15px;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.logo:hover .core {
+  transform: translateX(1px) translateY(1px) scale(1.12);
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.primary {
+  font-weight: 650;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+}
+
+.secondary {
+  font-size: 0.9rem;
+  font-weight: 450;
+  color: var(--text-muted);
+  letter-spacing: -0.01em;
+}
+
+/* Very narrow phones: keep the mark + "SMR" so the header never overflows. */
+@media (max-width: 379px) {
+  /* Visually hidden but still part of the link's accessible name. */
+  .secondary {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}

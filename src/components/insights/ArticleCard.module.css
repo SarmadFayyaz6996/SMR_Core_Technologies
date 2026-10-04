@@ -1,0 +1,61 @@
+.card {
+  height: 100%;
+}
+
+.link {
+  display: grid;
+  align-content: start;
+  gap: var(--space-5);
+  height: 100%;
+  border-radius: var(--radius-lg);
+}
+
+.body {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  color: var(--text-subtle);
+}
+
+.meta span:first-child {
+  color: var(--accent-text);
+}
+
+.title {
+  font-size: var(--fs-h3);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.link:hover .title {
+  color: var(--accent-text);
+}
+
+.excerpt {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}
+
+@media (min-width: 900px) {
+  .featured .link {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-12);
+  }
+
+  .featured .title {
+    font-size: clamp(1.75rem, 1.2rem + 1.5vw, 2.5rem);
+    letter-spacing: var(--tracking-display);
+    line-height: 1.1;
+  }
+
+  .featured .excerpt {
+    font-size: var(--fs-lead);
+  }
+}

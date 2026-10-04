@@ -1,0 +1,219 @@
+.hero {
+  --mx: 70%;
+  --my: 30%;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin-top: calc(var(--nav-h) * -1);
+  padding-top: calc(var(--nav-h) + clamp(var(--space-10), 6vw, var(--space-20)));
+  padding-bottom: clamp(var(--space-16), 8vw, var(--space-24));
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  mask-image: radial-gradient(ellipse 80% 70% at 60% 35%, #000 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 60% 35%, #000 20%, transparent 75%);
+}
+
+.spotlight {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(600px circle at var(--mx) var(--my), var(--accent-soft), transparent 60%),
+    radial-gradient(900px 500px at 85% -10%, var(--accent-soft), transparent 70%);
+  transition: background 0.2s linear;
+}
+
+.inner {
+  display: grid;
+  gap: clamp(var(--space-12), 6vw, var(--space-16));
+  align-items: center;
+}
+
+@media (min-width: 1080px) {
+  .inner {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    min-height: min(78vh, 760px);
+  }
+}
+
+.copy {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-6);
+  max-width: 44rem;
+}
+
+/* ---------- Announcement pill ---------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.3rem 0.75rem 0.3rem 0.3rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border);
+  transition:
+    box-shadow var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
+  animation: rise var(--dur-slow) var(--ease-out) both;
+}
+
+.pill:hover {
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+.pill svg {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.pill:hover svg {
+  transform: translateX(2px);
+}
+
+.pillTag {
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+/* ---------- Headline with word reveal ---------- */
+.title {
+  font-size: var(--fs-display);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-display);
+  font-weight: 600;
+}
+
+.wordMask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  /* Room for descenders inside the clipping mask. */
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+
+.word {
+  display: inline-block;
+  animation: wordUp 700ms var(--ease-out) both;
+  animation-delay: calc(var(--w) * 45ms);
+}
+
+.lead {
+  font-size: var(--fs-lead);
+  color: var(--text-muted);
+  max-width: 36rem;
+  animation: rise var(--dur-slow) var(--ease-out) 500ms both;
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  animation: rise var(--dur-slow) var(--ease-out) 620ms both;
+}
+
+@media (max-width: 479px) {
+  .ctas {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .ctas > *,
+  .ctas a {
+    width: 100%;
+  }
+}
+
+.capabilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin-top: var(--space-4);
+  color: var(--text-subtle);
+  animation: rise var(--dur-slow) var(--ease-out) 740ms both;
+}
+
+.capabilities li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.capabilities li::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+.visualWrap {
+  position: relative;
+  animation: fadeScale 1.4s var(--ease-out) 200ms both;
+}
+
+@media (max-width: 1079px) {
+  .visualWrap {
+    max-width: 560px;
+    width: 100%;
+    margin-inline: auto;
+  }
+}
+
+/* Starts partly inside the mask (not fully hidden) so the h1 paints on the
+   first frame — keeps Largest Contentful Paint fast while still animating. */
+@keyframes wordUp {
+  from {
+    transform: translateY(45%);
+    opacity: 0.35;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes fadeScale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/* One continuous gradient spread across the accent words (each shows a third). */
+.accentWord {
+  background-image: linear-gradient(
+    100deg,
+    var(--text) 0%,
+    var(--accent-text) 45%,
+    var(--signal) 100%
+  );
+  background-size: 300% 100%;
+  background-position-x: calc(var(--a) * 50%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Phones: render the headline instantly — it is the LCP element and the
+   word reveal costs more than it adds on a small, CPU-constrained screen. */
+@media (max-width: 767px) {
+  .word {
+    animation: none;
+  }
+}

@@ -1,0 +1,41 @@
+.wrap {
+  min-height: 70vh;
+  display: grid;
+  align-items: center;
+}
+
+.inner {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-5);
+  text-align: center;
+  color: var(--text-subtle);
+}
+
+.mark {
+  color: var(--text);
+  margin-bottom: var(--space-4);
+}
+
+.mark rect:last-child {
+  fill: var(--accent);
+}
+
+.title {
+  font-size: var(--fs-h2);
+  letter-spacing: var(--tracking-display);
+  color: var(--text);
+  max-width: 36rem;
+}
+
+.text {
+  color: var(--text-muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}

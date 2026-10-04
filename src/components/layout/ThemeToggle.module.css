@@ -1,0 +1,35 @@
+.toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  overflow: hidden;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.toggle:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.icons {
+  display: grid;
+}
+
+.icons > svg {
+  grid-area: 1 / 1;
+  transition:
+    transform var(--dur-slow) var(--ease-out),
+    opacity var(--dur-base) var(--ease-out);
+}
+
+/* Show the icon for the *current* theme; rotate the other away. */
+.icons[data-theme-icon='dark'] > svg:last-child,
+.icons[data-theme-icon='light'] > svg:first-child {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.6);
+}
