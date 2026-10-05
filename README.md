@@ -57,6 +57,8 @@ Design tokens (colour, type, spacing, motion, both themes) live in `src/app/glob
 
 ## Quality
 
+See [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md) for the full guide.
+
 Lighthouse (production build, local): desktop 100 / 100 / 100 / 100; mobile Performance 91–96 with
 Accessibility, Best Practices and SEO at 100. Respects `prefers-reduced-motion`, works without
 JavaScript for all content, and supports keyboard navigation throughout.

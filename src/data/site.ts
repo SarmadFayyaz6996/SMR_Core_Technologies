@@ -8,10 +8,10 @@ export const site = {
   tagline: 'We build software that moves business forward.',
   description:
     'SMR Core Technologies is a custom software development company engineering high-performance web, mobile, desktop, SaaS and AI-powered software for ambitious businesses.',
-  url: (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.smrcoretech.com').replace(/\/$/, ''),
+  url: (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://smrcoretechnologies.com').replace(/\/$/, ''),
   locale: 'en_US',
-  /** Placeholder contact details — replace with real values. */
-  email: 'hello@smrcoretech.com',
+  email: 'sarmad.fayyaz99@gmail.com',
+  /** Placeholder social profiles — replace with real URLs before launch. */
   social: {
     linkedin: 'https://www.linkedin.com/company/smr-core-technologies',
     github: 'https://github.com/smr-core-technologies',
