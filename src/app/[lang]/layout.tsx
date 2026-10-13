@@ -6,7 +6,8 @@ import { RevealObserver } from '@/components/layout/RevealObserver';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { getPrimaryNav } from '@/data/navigation';
 import { site } from '@/data/site';
-import { localeInfo, locales } from '@/i18n/config';
+import { notFound } from 'next/navigation';
+import { isLocale, localeInfo, locales } from '@/i18n/config';
 import { getDictionary, getLocale } from '@/i18n/server';
 import { organizationSchema, websiteSchema } from '@/lib/seo';
 import { themeInitScript } from '@/lib/theme';
@@ -22,12 +23,14 @@ const geistMono = Geist_Mono({
   preload: false,
 });
 
-/** Pre-render every page in every language at build time. */
+/**
+ * Pre-render every page in every language at build time. On-demand rendering stays
+ * enabled (no `dynamicParams = false`) so pages still work on hosts that don't serve the
+ * pre-rendered files; unknown languages are rejected explicitly in the layout below.
+ */
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
 }
-
-export const dynamicParams = false;
 
 export async function generateMetadata(): Promise<Metadata> {
   const [locale, dict] = await Promise.all([getLocale(), getDictionary()]);
@@ -64,7 +67,14 @@ export const viewport: Viewport = {
   colorScheme: 'dark light',
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ lang: string }>;
+}) {
+  if (!isLocale((await params).lang)) notFound();
   const [locale, dict] = await Promise.all([getLocale(), getDictionary()]);
 
   return (

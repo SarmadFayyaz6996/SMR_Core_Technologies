@@ -16,8 +16,6 @@ interface ServicePageProps {
   params: Promise<{ slug: string }>;
 }
 
-export const dynamicParams = false;
-
 export function generateStaticParams() {
   return serviceSlugs.map((slug) => ({ slug }));
 }
