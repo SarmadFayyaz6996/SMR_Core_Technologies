@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { LocaleLink as Link } from '@/i18n/LocaleLink';
 import { cx } from '@/lib/cx';
 import styles from './Logo.module.css';
 

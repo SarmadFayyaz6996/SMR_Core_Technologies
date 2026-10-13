@@ -1,18 +1,25 @@
-import Link from 'next/link';
-import { footerNav, legalNav } from '@/data/navigation';
+import { getFooterNav, getLegalNav } from '@/data/navigation';
 import { site } from '@/data/site';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { LogoMark } from '@/components/ui/Logo';
+import { format } from '@/i18n/format';
+import { LocaleLink } from '@/i18n/LocaleLink';
+import { getDictionary } from '@/i18n/server';
 import { cx } from '@/lib/cx';
 import styles from './Footer.module.css';
 
-const socials: { label: string; href: string; icon: IconName }[] = [
-  { label: 'LinkedIn', href: site.social.linkedin, icon: 'linkedin' },
-  { label: 'GitHub', href: site.social.github, icon: 'github' },
-  { label: 'X', href: site.social.x, icon: 'x' },
-];
+/** Only profiles that exist are shown (see `site.social`). */
+const socials = (
+  [
+    { label: 'LinkedIn', href: site.social.linkedin, icon: 'linkedin' },
+    { label: 'GitHub', href: site.social.github, icon: 'github' },
+    { label: 'X', href: site.social.x, icon: 'x' },
+  ] satisfies { label: string; href: string; icon: IconName }[]
+).filter((s) => s.href);
 
-export function Footer() {
+export async function Footer() {
+  const dict = await getDictionary();
+  const t = dict.footer;
   const year = new Date().getFullYear();
 
   return (
@@ -20,27 +27,27 @@ export function Footer() {
       <div className={cx('container-wide', styles.inner)}>
         <div className={styles.top}>
           <div className={styles.brand}>
-            <Link href="/" className={styles.brandLink}>
+            <LocaleLink href="/" className={styles.brandLink}>
               <LogoMark size={32} />
               <span>{site.name}</span>
-            </Link>
-            <p className={styles.tagline}>{site.tagline}</p>
+            </LocaleLink>
+            <p className={styles.tagline}>{dict.common.tagline}</p>
             <a href={`mailto:${site.email}`} className={styles.email}>
               <Icon name="mail" size={16} />
               {site.email}
             </a>
           </div>
 
-          <nav aria-label="Footer" className={styles.columns}>
-            {footerNav.map((group) => (
+          <nav aria-label={t.navLabel} className={styles.columns}>
+            {getFooterNav(dict).map((group) => (
               <div key={group.title}>
                 <h2 className={cx('mono', styles.colTitle)}>{group.title}</h2>
                 <ul className={styles.colLinks}>
                   {group.links.map((link) => (
                     <li key={link.label}>
-                      <Link href={link.href} className={styles.link}>
+                      <LocaleLink href={link.href} className={styles.link}>
                         {link.label}
-                      </Link>
+                      </LocaleLink>
                     </li>
                   ))}
                 </ul>
@@ -50,19 +57,17 @@ export function Footer() {
         </div>
 
         <div className={styles.bottom}>
-          <p className={styles.copy}>
-            © {year} {site.name}. All rights reserved.
-          </p>
+          <p className={styles.copy}>{format(t.rights, { year, name: site.name })}</p>
           <ul className={styles.legal}>
-            {legalNav.map((link) => (
+            {getLegalNav(dict).map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className={styles.link}>
+                <LocaleLink href={link.href} className={styles.link}>
                   {link.label}
-                </Link>
+                </LocaleLink>
               </li>
             ))}
           </ul>
-          <ul className={styles.socials}>
+          <ul className={styles.socials} hidden={socials.length === 0}>
             {socials.map((s) => (
               <li key={s.label}>
                 <a
@@ -70,7 +75,7 @@ export function Footer() {
                   className={styles.social}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`${site.name} on ${s.label}`}
+                  aria-label={format(t.socialOn, { name: site.name, network: s.label })}
                 >
                   <Icon name={s.icon} size={16} />
                 </a>

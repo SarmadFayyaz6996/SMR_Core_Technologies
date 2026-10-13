@@ -1,92 +1,83 @@
 import type { IconName } from '@/components/ui/Icon';
+import type { Dictionary } from '@/i18n/dictionaries/en';
 
-export interface Technology {
-  name: string;
-  /** Two-character "element" symbol used by the periodic-table tiles. */
-  symbol: string;
-  note: string;
-}
-
-export interface TechLayer {
-  id: string;
-  name: string;
-  icon: IconName;
-  description: string;
-  technologies: Technology[];
-}
+type LayerId = keyof Dictionary['technology']['layers'];
+type TechSymbol = keyof Dictionary['technology']['notes'];
 
 /** Ordered top (user-facing) to bottom (infrastructure) — rendered as a stack. */
-export const techLayers: TechLayer[] = [
+const layerData: {
+  id: LayerId;
+  icon: IconName;
+  /** Technology names are not translated; each `symbol` keys a translated note. */
+  technologies: { name: string; symbol: TechSymbol }[];
+}[] = [
   {
     id: 'ai',
-    name: 'AI',
     icon: 'sparkles',
-    description: 'Language models, retrieval and machine learning APIs woven into product logic.',
     technologies: [
-      { name: 'OpenAI', symbol: 'Oa', note: 'GPT models & embeddings' },
-      { name: 'Azure OpenAI', symbol: 'Ao', note: 'Enterprise-grade LLM hosting' },
-      { name: 'Machine Learning APIs', symbol: 'Ml', note: 'Vision, speech & prediction' },
+      { name: 'OpenAI', symbol: 'Oa' },
+      { name: 'Azure OpenAI', symbol: 'Ao' },
+      { name: 'Machine Learning APIs', symbol: 'Ml' },
     ],
   },
   {
     id: 'frontend',
-    name: 'Frontend',
     icon: 'browser',
-    description: 'Fast, accessible interfaces with component architecture and strong typing.',
     technologies: [
-      { name: 'Angular', symbol: 'Ng', note: 'Structured enterprise SPAs' },
-      { name: 'React', symbol: 'Re', note: 'Composable UI at any scale' },
-      { name: 'Next.js', symbol: 'Nx', note: 'Server rendering & edge delivery' },
+      { name: 'Angular', symbol: 'Ng' },
+      { name: 'React', symbol: 'Re' },
+      { name: 'Next.js', symbol: 'Nx' },
     ],
   },
   {
     id: 'backend',
-    name: 'Backend',
     icon: 'code',
-    description: 'Secure, well-tested services and APIs designed for long-term change.',
     technologies: [
-      { name: 'ASP.NET Core', symbol: 'As', note: 'High-throughput APIs & services' },
-      { name: 'Node.js', symbol: 'Nd', note: 'Real-time & event-driven services' },
-      { name: 'Python', symbol: 'Py', note: 'Data pipelines & AI workloads' },
+      { name: 'ASP.NET Core', symbol: 'As' },
+      { name: 'Node.js', symbol: 'Nd' },
+      { name: 'Python', symbol: 'Py' },
     ],
   },
   {
     id: 'database',
-    name: 'Database',
     icon: 'database',
-    description: 'Relational and document data models tuned for integrity and performance.',
     technologies: [
-      { name: 'SQL Server', symbol: 'Sq', note: 'Transactional enterprise data' },
-      { name: 'PostgreSQL', symbol: 'Pg', note: 'Relational + JSON + vectors' },
-      { name: 'MySQL', symbol: 'My', note: 'Proven web-scale storage' },
-      { name: 'MongoDB', symbol: 'Mg', note: 'Flexible document models' },
+      { name: 'SQL Server', symbol: 'Sq' },
+      { name: 'PostgreSQL', symbol: 'Pg' },
+      { name: 'MySQL', symbol: 'My' },
+      { name: 'MongoDB', symbol: 'Mg' },
     ],
   },
   {
     id: 'cloud',
-    name: 'Cloud',
     icon: 'cloud',
-    description: 'Cloud-native architecture with security, scaling and cost in mind.',
     technologies: [
-      { name: 'Microsoft Azure', symbol: 'Az', note: 'App Service, AKS, Functions' },
-      { name: 'AWS', symbol: 'Aw', note: 'ECS, Lambda, RDS' },
+      { name: 'Microsoft Azure', symbol: 'Az' },
+      { name: 'AWS', symbol: 'Aw' },
     ],
   },
   {
     id: 'devops',
-    name: 'DevOps',
     icon: 'infinity',
-    description: 'Automated pipelines, containers and observability for confident releases.',
     technologies: [
-      { name: 'Docker', symbol: 'Dk', note: 'Reproducible containers' },
-      { name: 'Kubernetes', symbol: 'K8', note: 'Orchestration at scale' },
-      { name: 'Azure DevOps', symbol: 'Ad', note: 'Boards, repos & pipelines' },
-      { name: 'GitHub Actions', symbol: 'Gh', note: 'CI/CD as code' },
+      { name: 'Docker', symbol: 'Dk' },
+      { name: 'Kubernetes', symbol: 'K8' },
+      { name: 'Azure DevOps', symbol: 'Ad' },
+      { name: 'GitHub Actions', symbol: 'Gh' },
     ],
   },
 ];
 
-/** Flat list for the "technology we work with" strip. */
+export const getTechLayers = (dict: Dictionary) =>
+  layerData.map((layer) => ({
+    ...layer,
+    ...dict.technology.layers[layer.id],
+    technologies: layer.technologies.map((t) => ({ ...t, note: dict.technology.notes[t.symbol] })),
+  }));
+
+export type TechLayer = ReturnType<typeof getTechLayers>[number];
+
+/** Flat list for the "technology we work with" strip (names are not translated). */
 export const featuredTechnologies = [
   'Angular',
   'React',

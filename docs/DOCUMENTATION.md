@@ -27,6 +27,7 @@ write the code.
 17. [Quality checks and results](#17-quality-checks-and-results)
 18. [Placeholders and things to finish before launch](#18-placeholders-and-things-to-finish-before-launch)
 19. [Glossary](#19-glossary)
+20. [Languages and country detection](#20-languages-and-country-detection)
 
 ---
 
@@ -75,8 +76,10 @@ itself.
 
 Next.js is the backbone. This project uses these parts of it:
 
-- **App Router (`src/app/`)**: every folder is a URL. For example `src/app/contact/page.tsx`
-  serves `/contact`.
+- **App Router (`src/app/`)**: every folder is a URL. Pages live under a `[lang]` segment, so
+  `src/app/[lang]/contact/page.tsx` serves `/en/contact`, `/fr/contact`, … (see
+  [Languages](#20-languages-and-country-detection)).
+- **Proxy (`src/proxy.ts`)**: runs before each request and sends visitors to their language.
 - **Static generation**: most pages are rendered to HTML once at build time, so the server sends
   ready-made HTML, which is fast and SEO-friendly. Service and article pages are generated from
   data with `generateStaticParams`.
@@ -191,15 +194,19 @@ The goal was a fast, maintainable site with few moving parts:
 ```
 SRM_Core_Technologies/
 ├─ src/
+│  ├─ proxy.ts                ← Sends visitors to their language (/fr, /de, …)
 │  ├─ app/                    ← Routes (each folder = a URL) + site-wide files
-│  │  ├─ layout.tsx           ← Wraps every page: fonts, theme script, navbar, footer, schema
-│  │  ├─ page.tsx             ← Home page (assembles the sections)
+│  │  ├─ [lang]/              ← Every page, once per language
+│  │  │  ├─ layout.tsx        ← Wraps every page: <html lang>, fonts, theme script, navbar, footer
+│  │  │  ├─ page.tsx          ← Home page (assembles the sections)
+│  │  │  ├─ contact/  work/  insights/  insights/[slug]/  services/[slug]/
+│  │  │  ├─ careers/  privacy/  terms/  cookies/
+│  │  │  ├─ not-found.tsx  [...rest]/   ← Localized 404
+│  │  │  └─ opengraph-image.tsx         ← Social card in each language
 │  │  ├─ globals.css          ← Design tokens, base styles, shared utilities
-│  │  ├─ contact/  work/  insights/  insights/[slug]/  services/[slug]/
-│  │  ├─ careers/  privacy/  terms/  cookies/
 │  │  ├─ api/contact/route.ts ← Contact form backend endpoint
-│  │  ├─ not-found.tsx        ← Custom 404
-│  │  ├─ sitemap.ts  robots.ts  manifest.ts  opengraph-image.tsx  icon.svg
+│  │  ├─ sitemap.ts  robots.ts  manifest.ts  icon.svg
+│  ├─ i18n/                   ← Languages: config, detection, dictionaries, LocaleLink
 │  ├─ components/
 │  │  ├─ layout/              ← Navbar, Footer, PageHero, ThemeToggle, RevealObserver, LegalPage
 │  │  ├─ sections/            ← Home sections (hero/, ai/, process/, technology/, solutions/, …)
@@ -209,7 +216,7 @@ SRM_Core_Technologies/
 │  │  ├─ insights/            ← ArticleCard, ArticleCover
 │  │  ├─ ui/                  ← Button, Icon, Logo, SectionHeader, Tabs, DemoBadge, Magnetic, PointerField
 │  │  └─ seo/JsonLd.tsx       ← Outputs structured data
-│  ├─ data/                   ← ALL site content (edit these to change text)
+│  ├─ data/                   ← Content structure (icons, slugs, order); text is in i18n/dictionaries
 │  └─ lib/                    ← Helpers: seo, contact validation, theme, formatting, hooks
 ├─ docs/DOCUMENTATION.md      ← This file
 ├─ .env.example               ← Environment variables template
@@ -240,14 +247,19 @@ don't want them.
 | `/sitemap.xml` `/robots.txt` `/manifest.webmanifest` `/opengraph-image` | `app/*.ts(x)`                  | Generated         | SEO and app metadata                              |
 | anything else                                                           | `app/not-found.tsx`            | —                 | Custom 404 page                                   |
 
-The navigation links to home sections with anchors (for example `/#services`). Work links to the
-`/work` page.
+Every page above exists once per language, under `/en`, `/de`, `/fr`, `/es`, `/it`, `/nl`,
+`/pt`, `/pl`, `/sv` and `/tr` (files live in `app/[lang]/…`). A URL without a language — such as
+`/` or `/work` — is redirected to the visitor's language by `src/proxy.ts`.
+
+The navigation links to home sections with anchors (for example `/fr#services`). Work links to the
+`/<lang>/work` page.
 
 ---
 
 ## 7. The home page, section by section
 
-The order is set in `src/app/page.tsx`. Each section is its own component.
+The order is set in `src/app/[lang]/page.tsx`. Each section is its own component and reads its
+text from the current language's dictionary.
 
 | #   | Section          | Component                                            | What it shows / how it behaves                                                                                                                                                                                                                              |
 | --- | ---------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -521,37 +533,46 @@ What makes the site fast:
 
 ## 14. Editing content
 
-All text lives in `src/data/`. After editing, the dev server reloads automatically.
+Content is split in two:
 
-| To change…                           | Edit                     |
-| ------------------------------------ | ------------------------ |
-| Company name, email, domain, socials | `data/site.ts`           |
-| Navigation and footer links          | `data/navigation.ts`     |
-| Services (+ their detail pages)      | `data/services.ts`       |
-| Concept solutions                    | `data/solutions.ts`      |
-| Case studies                         | `data/projects.ts`       |
-| AI console scripts                   | `data/ai.ts`             |
-| Technology stack and tiles           | `data/technologies.ts`   |
-| Process steps                        | `data/process.ts`        |
-| Principles / Why SMR                 | `data/principles.ts`     |
-| Industries                           | `data/industries.ts`     |
-| FAQ                                  | `data/faq.ts`            |
-| Blog articles                        | `data/blog.ts`           |
-| Legal page text                      | `data/legal.ts`          |
-| Contact form options                 | `data/projectOptions.ts` |
+- **All visible text** lives in the language dictionaries: `src/i18n/dictionaries/<lang>.ts`
+  (`en.ts` is the source; see [Languages](#20-languages-and-country-detection)).
+- **Structure** (icons, slugs, technology names, dates, order) lives in `src/data/`.
+
+After editing, the dev server reloads automatically.
+
+| To change…                           | Text (every language) | Structure                |
+| ------------------------------------ | --------------------- | ------------------------ |
+| Company name, email, domain, socials | —                     | `data/site.ts`           |
+| Navigation and footer labels / links | `nav`, `footer`       | `data/navigation.ts`     |
+| Services (+ their detail pages)      | `services.items`      | `data/services.ts`       |
+| Concept solutions                    | `solutions.items`     | `data/solutions.ts`      |
+| Case studies                         | `caseStudies.items`   | `data/projects.ts`       |
+| AI console scripts                   | `ai.items`            | `data/ai.ts`             |
+| Technology stack and tiles           | `technology`          | `data/technologies.ts`   |
+| Process steps                        | `process.steps`       | —                        |
+| Principles / Why SMR                 | `principles`, `why`   | `data/principles.ts`     |
+| Industries                           | `industries.items`    | `data/industries.ts`     |
+| FAQ                                  | `faq.items`           | —                        |
+| Blog articles                        | `insights.articles`   | `data/blog.ts`           |
+| Legal page text                      | `legal.documents`     | `data/legal.ts`          |
+| Contact form options and messages    | `contact`             | `data/projectOptions.ts` |
 
 ### Example: add a service
 
-1. Add an object to the `services` array in `data/services.ts`, with `slug`, `title`, `icon`,
-   `summary`, `description`, `deliverables`, `technologies` and `projectType`.
-2. Done. The card, the `/services/<slug>` page, the sitemap entry and the structured data are all
-   created automatically. TypeScript reports any missing field.
+1. Add an entry to `serviceData` in `data/services.ts` (`slug`, `icon`, `technologies`,
+   `projectType`).
+2. Add its text under `services.items['<slug>']` in **every** dictionary (`title`, `summary`,
+   `description`, `deliverables`).
+3. Done. The card, the `/<lang>/services/<slug>` pages, sitemap entries and structured data are
+   created automatically. TypeScript reports any language that is missing the new text.
 
 ### Example: add an article
 
-1. Add an object to `articles` in `data/blog.ts`. The first article in the list is shown as
-   featured.
-2. A page at `/insights/<slug>`, a generated cover and a sitemap entry are created automatically.
+1. Add an entry to `articleData` in `data/blog.ts` (`slug`, `category`, `date`,
+   `readingMinutes`). The first article is shown as featured.
+2. Add its `title`, `excerpt` and `sections` under `insights.articles['<slug>']` in every
+   dictionary.
 
 ### Icons
 
@@ -564,10 +585,13 @@ Available names are the keys in `components/ui/Icon.tsx` (for example `cloud`, `
 
 Copy `.env.example` to `.env.local`:
 
-| Variable               | Required    | Purpose                                                                                                                                                                             |
-| ---------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL` | Recommended | Your real domain (for example `https://www.yourdomain.com`), used for canonical URLs, the sitemap, social cards and structured data. Defaults to `https://smrcoretechnologies.com`. |
-| `CONTACT_WEBHOOK_URL`  | Optional    | Where contact submissions are sent. Leave empty for demo mode.                                                                                                                      |
+| Variable                                                            | Required    | Purpose                                                                                                                                                                             |
+| ------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`                                              | Recommended | Your real domain (for example `https://www.yourdomain.com`), used for canonical URLs, the sitemap, social cards and structured data. Defaults to `https://smrcoretechnologies.com`. |
+| `CONTACT_WEBHOOK_URL`                                               | Optional    | Where contact submissions are sent. Leave empty for demo mode.                                                                                                                      |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`                              | Recommended | Google Search Console "HTML tag" verification code (only the `content` value).                                                                                                      |
+| `NEXT_PUBLIC_BING_SITE_VERIFICATION`                                | Optional    | Bing Webmaster Tools meta-tag verification code.                                                                                                                                    |
+| `NEXT_PUBLIC_LINKEDIN_URL` / `_GITHUB_URL` / `_X_URL` / `_X_HANDLE` | Optional    | Real social profiles. Empty ones are hidden from the footer and left out of structured data.                                                                                        |
 
 `.env.local` is git-ignored, so secrets never get committed.
 
@@ -631,15 +655,16 @@ your hosting.
 
 ## 18. Placeholders and things to finish before launch
 
-| Item                          | Where                 | Action                                                                           |
-| ----------------------------- | --------------------- | -------------------------------------------------------------------------------- |
-| LinkedIn / GitHub / X links   | `data/site.ts`        | Replace with real profiles, or remove                                            |
-| Contact delivery              | `CONTACT_WEBHOOK_URL` | Connect a webhook, otherwise submissions go nowhere                              |
-| Legal pages                   | `data/legal.ts`       | Have counsel review, then remove `noIndex` and the "template" badge              |
-| Demo case studies and metrics | `data/projects.ts`    | Replace with real (approved) projects when available, and remove the demo labels |
-| Demo articles                 | `data/blog.ts`        | Replace with real articles                                                       |
-| Reply promise                 | `ContactForm.tsx`     | "Usually reply within one business day": keep or change it                       |
-| Git                           | —                     | Nothing has been committed yet                                                   |
+| Item                          | Where                                  | Action                                                                                |
+| ----------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------- |
+| LinkedIn / GitHub / X links   | `data/site.ts`                         | Replace with real profiles, or remove                                                 |
+| Contact delivery              | `CONTACT_WEBHOOK_URL`                  | Connect a webhook, otherwise submissions go nowhere                                   |
+| Legal pages                   | `data/legal.ts`                        | Have counsel review, then remove `noIndex` and the "template" badge                   |
+| Demo case studies and metrics | `data/projects.ts`                     | Replace with real (approved) projects when available, and remove the demo labels      |
+| Demo articles                 | `data/blog.ts`                         | Replace with real articles                                                            |
+| Reply promise                 | `contact.form.note` in each dictionary | "Usually reply within one business day": keep or change it                            |
+| Translation review            | `src/i18n/dictionaries/*.ts`           | Machine-quality translations — have a native speaker review each market before launch |
+| Git                           | —                                      | Nothing has been committed yet                                                        |
 
 ---
 
@@ -659,3 +684,88 @@ your hosting.
 - **Honeypot:** a hidden form field that only bots fill in, used to filter spam.
 - **Webhook:** a URL that receives data via HTTP POST, used here to deliver form leads.
 - **Hydration:** React attaching interactivity to server-rendered HTML in the browser.
+- **Locale:** a language code such as `fr` or `de`; the first part of every page URL.
+- **hreflang:** tags that tell search engines which URL is which language version of a page.
+
+---
+
+## 20. Languages and country detection
+
+The whole site is available in **10 languages**, each at its own URL prefix:
+
+| Code | Language   | Served automatically to visitors from                                    |
+| ---- | ---------- | ------------------------------------------------------------------------ |
+| `en` | English    | Everywhere not listed below (UK, Ireland, Nordics except Sweden, USA, …) |
+| `de` | Deutsch    | Germany, Austria, Liechtenstein (+ Switzerland, Luxembourg)              |
+| `fr` | Français   | France, Monaco (+ Belgium, Switzerland, Luxembourg)                      |
+| `es` | Español    | Spain, Andorra and Latin America                                         |
+| `it` | Italiano   | Italy, San Marino, Vatican (+ Switzerland)                               |
+| `nl` | Nederlands | Netherlands, Suriname (+ Belgium)                                        |
+| `pt` | Português  | Portugal, Brazil, Angola, Mozambique                                     |
+| `pl` | Polski     | Poland                                                                   |
+| `sv` | Svenska    | Sweden, Åland                                                            |
+| `tr` | Türkçe     | Turkey                                                                   |
+
+Multilingual countries (Switzerland, Belgium, Luxembourg) use the visitor's browser language to
+choose between their languages.
+
+### How a visitor gets their language
+
+```
+ Visitor opens smrcoretechnologies.com/work
+        │
+        ▼
+ src/proxy.ts (runs before every page request)
+   1. Saved choice?   cookie NEXT_LOCALE (set by the language switcher)   → use it
+   2. Country?        geo header from the host (e.g. x-vercel-ip-country=FR) → French
+   3. Browser?        Accept-Language header (e.g. de-DE)                 → German
+   4. Otherwise       → English
+        │
+        ▼
+ 307 redirect → /fr/work   (URLs that already start with a language are never redirected)
+```
+
+- **Shared links always work:** `/de/work` is German for everyone, wherever they are.
+- **Visitors can always switch:** the language menu (globe icon, top right; also on mobile)
+  links to the same page in every language and remembers the choice for a year.
+- **Country detection needs a geo header from your host.** Vercel (`x-vercel-ip-country`),
+  Cloudflare (`cf-ipcountry`), AWS CloudFront (`cloudfront-viewer-country`) and Netlify provide it
+  automatically. On a plain Node.js server without a CDN in front, detection falls back to the
+  browser language — put Cloudflare in front to get country detection.
+
+### Where the code lives
+
+| File                                         | Role                                                                             |
+| -------------------------------------------- | -------------------------------------------------------------------------------- |
+| `src/i18n/config.ts`                         | Language list, native names, country → language map, URL helpers                 |
+| `src/i18n/negotiate.ts`                      | Reads country / browser headers and picks a language                             |
+| `src/proxy.ts`                               | Redirects un-prefixed URLs to the right language                                 |
+| `src/i18n/dictionaries/en.ts`                | All English text; its shape is the type every language must match                |
+| `src/i18n/dictionaries/<lang>.ts`            | The 9 translations                                                               |
+| `src/i18n/server.ts`                         | `getDictionary()` / `getLocale()` for server components (via `next/root-params`) |
+| `src/i18n/LocaleLink.tsx`                    | Link that keeps the visitor in their language (`/work` → `/fr/work`)             |
+| `src/components/layout/LanguageSwitcher.tsx` | The globe menu                                                                   |
+| `src/app/[lang]/…`                           | Every page lives under the `[lang]` segment                                      |
+
+### Safety nets
+
+- **Type-checked translations:** each dictionary is typed as `Dictionary`, so a missing or extra
+  key in any language fails `npm run typecheck` and the build.
+- **Static pages per language:** all pages are pre-rendered for all 10 languages (~300 pages).
+- **SEO per language:** translated titles/descriptions, `<html lang>`, canonical URL per language,
+  `hreflang` alternates (+ `x-default` → English) on every page and in the sitemap (190 URLs),
+  localized Open Graph images, and `inLanguage` in structured data.
+- **Formats:** dates use each language's format (e.g. "18 sept. 2026"). Fonts include the Latin
+  Extended characters needed for Polish and Turkish.
+
+### Changing a translation
+
+Open `src/i18n/dictionaries/<lang>.ts`, find the key (same name as in `en.ts`) and edit the text.
+Keep `{placeholders}` such as `{name}` unchanged.
+
+### Adding another language
+
+1. Add the code to `locales` and `localeInfo` in `src/i18n/config.ts`, and its countries to
+   `countryLocales`.
+2. Copy `en.ts` to `<code>.ts`, rename the export, type it as `Dictionary` and translate.
+3. Register the loader in `src/i18n/server.ts`. TypeScript then guides you through anything missing.

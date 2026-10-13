@@ -34,7 +34,7 @@ export function ArticleCover({ article, large }: { article: Article; large?: boo
           <i key={i} data-on={v > 0.62 || undefined} />
         ))}
       </div>
-      <span className={`mono ${styles.label}`}>{article.category}</span>
+      <span className={`mono ${styles.label}`}>{article.categoryLabel}</span>
     </div>
   );
 }

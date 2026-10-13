@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ ok: false, error: 'Invalid request body.' }, { status: 400 });
+    return NextResponse.json({ ok: false, error: 'reviewForm' }, { status: 400 });
   }
 
   const data = normalize(body);
@@ -57,10 +57,8 @@ export async function POST(request: Request) {
       if (!res.ok) throw new Error(`Webhook responded with ${res.status}`);
     } catch (error) {
       console.error('Contact webhook failed', error);
-      return NextResponse.json(
-        { ok: false, error: 'We could not send your message right now. Please try again shortly.' },
-        { status: 502 },
-      );
+      // Error codes (not sentences) — the form shows them in the visitor's language.
+      return NextResponse.json({ ok: false, error: 'deliveryFailed' }, { status: 502 });
     }
   }
 

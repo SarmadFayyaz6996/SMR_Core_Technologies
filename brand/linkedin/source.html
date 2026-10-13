@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=block" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #07080b; --text: #eef0f4; --muted: #a1a7b4; --subtle: #6f7684;
+    --accent: #6d69ff; --accent-text: #a9a7ff; --signal: #3ad6f2;
+    --line: rgba(255,255,255,.14); --grid: rgba(255,255,255,.05);
+  }
+  * { margin: 0; box-sizing: border-box; }
+  body { background: var(--bg); font-family: 'Geist', system-ui, sans-serif; color: var(--text); }
+  .canvas { position: relative; overflow: hidden; background: var(--bg); }
+  .grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+    background-size: var(--cell) var(--cell);
+  }
+  .glow { position: absolute; inset: 0; }
+  .mono { font-family: 'Geist Mono', ui-monospace, monospace; letter-spacing: .14em; text-transform: uppercase; }
+  .wordmark { display: flex; align-items: baseline; gap: .38em; white-space: nowrap; }
+  .wordmark b { font-weight: 650; letter-spacing: .02em; }
+  .wordmark span { font-weight: 450; color: var(--muted); letter-spacing: -.01em; }
+  .tagline { font-weight: 600; letter-spacing: -.035em; line-height: 1.05; }
+  .tagline em { font-style: normal; background: linear-gradient(100deg, var(--text), var(--accent-text) 45%, var(--signal)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .chips { display: flex; gap: .9em; color: var(--subtle); }
+  .chips i { font-style: normal; display: inline-flex; align-items: center; gap: .5em; }
+  .chips i::before { content: ''; width: .42em; height: .42em; background: var(--accent); border-radius: 1px; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const MARK = (size, stroke = 1.5) => `
+  <svg width="${size}" height="${size}" viewBox="0 0 32 32">
+    <rect x="1.5" y="1.5" width="29" height="29" rx="8" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="${stroke}"/>
+    <rect x="7.5" y="7.5" width="17" height="17" rx="4.5" fill="none" stroke="#fff" stroke-width="${stroke}"/>
+    <rect x="13" y="11" width="8" height="8" rx="2" fill="#6d69ff"/>
+  </svg>`;
+
+/* The hero "system core": core chip + orbit rings + module nodes on circuit traces. */
+const CORE = (w, h) => {
+  const cx = w / 2, cy = h / 2, s = Math.min(w, h);
+  const core = s * 0.26, r1 = s * 0.36, r2 = s * 0.5;
+  // Two columns of modules, kept fully inside the frame.
+  const nw = s * 0.31, nh = s * 0.1, pad = s * 0.03;
+  const colX = w / 2 - nw / 2 - pad, rowY = h * 0.24;
+  const nodes = [
+    ['Web Apps', 1, -1], ['AI Engine', 1, 1], ['Mobile', -1, -1], ['Cloud', -1, 1],
+  ].map(([label, sx, sy]) => ({ label, x: cx + sx * colX, y: cy + sy * rowY }));
+  const traces = nodes
+    .map((n) => {
+      const ex = cx + Math.sign(n.x - cx) * (core / 2 + s * 0.03);
+      const ey = cy + Math.sign(n.y - cy) * core * 0.22;
+      const nx = n.x - Math.sign(n.x - cx) * (nw / 2);
+      return `M${ex} ${ey} H${(ex + nx) / 2} V${n.y} H${nx}`;
+    })
+    .join(' ');
+  const pins = [];
+  for (let i = 1; i <= 4; i++) {
+    const o = cx - core / 2 + (core / 5) * i, p = cy - core / 2 + (core / 5) * i, L = s * 0.03;
+    pins.push(`M${o} ${cy - core / 2 - L}V${cy - core / 2}M${o} ${cy + core / 2}V${cy + core / 2 + L}`);
+    pins.push(`M${cx - core / 2 - L} ${p}H${cx - core / 2}M${cx + core / 2} ${p}H${cx + core / 2 + L}`);
+  }
+  return `
+  <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+    <defs>
+      <radialGradient id="g" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#6d69ff" stop-opacity=".5"/><stop offset="65%" stop-color="#6d69ff" stop-opacity=".05"/><stop offset="100%" stop-color="#6d69ff" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="c" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1c212c"/><stop offset="100%" stop-color="#0f1218"/></linearGradient>
+      <linearGradient id="t" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#6d69ff"/><stop offset="100%" stop-color="#3ad6f2"/></linearGradient>
+    </defs>
+    <circle cx="${cx}" cy="${cy}" r="${r2 * 1.1}" fill="url(#g)"/>
+    <circle cx="${cx}" cy="${cy}" r="${r2}" fill="none" stroke="rgba(255,255,255,.12)"/>
+    <circle cx="${cx}" cy="${cy}" r="${r1}" fill="none" stroke="rgba(255,255,255,.14)" stroke-dasharray="2 7"/>
+    <path d="${traces}" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1.2"/>
+    <path d="${traces}" fill="none" stroke="url(#t)" stroke-width="1.6" stroke-dasharray="${s * 0.05} ${s * 0.3}" opacity=".9"/>
+    <path d="${pins.join('')}" stroke="rgba(255,255,255,.2)" stroke-width="1.5" stroke-linecap="round"/>
+    <rect x="${cx - core / 2}" y="${cy - core / 2}" width="${core}" height="${core}" rx="${core * 0.19}" fill="url(#c)" stroke="rgba(255,255,255,.16)"/>
+    <rect x="${cx - core * 0.12}" y="${cy - core * 0.24}" width="${core * 0.24}" height="${core * 0.24}" rx="${core * 0.06}" fill="#6d69ff" transform="rotate(45 ${cx} ${cy - core * 0.12})" style="filter:drop-shadow(0 0 ${s * 0.03}px rgba(109,105,255,.8))"/>
+    <text x="${cx}" y="${cy + core * 0.24}" text-anchor="middle" font-family="Geist Mono" font-size="${core * 0.09}" font-weight="600" letter-spacing="${core * 0.016}" fill="#eef0f4">SMR CORE</text>
+    ${nodes.map((n, i) => `
+      <circle cx="${(cx + Math.sign(n.x - cx) * (core / 2 + s * 0.03) + n.x - Math.sign(n.x - cx) * (nw / 2)) / 2}" cy="${(cy + n.y) / 2}" r="${s * 0.011}" fill="${i % 2 ? '#3ad6f2' : '#a9a7ff'}" style="filter:drop-shadow(0 0 ${s * 0.015}px #3ad6f2)"/>
+      <rect x="${n.x - nw / 2}" y="${n.y - nh / 2}" width="${nw}" height="${nh}" rx="${nh * 0.28}" fill="#0f1218" stroke="${i === 2 ? '#6d69ff' : 'rgba(255,255,255,.16)'}"/>
+      <rect x="${n.x - nw / 2 + nh * 0.18}" y="${n.y - nh * 0.32}" width="${nh * 0.64}" height="${nh * 0.64}" rx="${nh * 0.16}" fill="#1c212c"/>
+      <rect x="${n.x - nw / 2 + nh * 0.38}" y="${n.y - nh * 0.12}" width="${nh * 0.24}" height="${nh * 0.24}" rx="${nh * 0.05}" fill="#a9a7ff"/>
+      <text x="${n.x - nw / 2 + nh * 1.0}" y="${n.y + nh * 0.14}" font-family="Geist" font-size="${nh * 0.38}" font-weight="600" fill="#eef0f4">${n.label}</text>`).join('')}
+  </svg>`;
+};
+
+/*
+ * Cover layout: all content sits in a narrower centre "safe zone" because LinkedIn and X
+ * crop the sides on phones, and the avatar overlaps the lower-left corner.
+ * o = { w, h, cell, left, top, gap, mark, word, size, maxW, chip, url, core:[cw,ch], coreLeft, coreTop }
+ */
+const cover = (o) => `
+  <div class="canvas" style="width:${o.w}px;height:${o.h}px;--cell:${o.cell}px">
+    <div class="grid" style="mask-image:radial-gradient(ellipse 45% 85% at 62% 50%,#000 10%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 45% 85% at 62% 50%,#000 10%,transparent 75%)"></div>
+    <div class="glow" style="background:radial-gradient(${o.core[0] * 1.2}px ${o.core[1] * 1.1}px at ${o.coreLeft + o.core[0] / 2}px ${o.coreTop + o.core[1] / 2}px,rgba(109,105,255,.3),transparent 70%)"></div>
+    <div style="position:absolute;left:${o.left}px;top:${o.top}px;display:grid;gap:${o.gap}px">
+      ${o.mark ? `<div class="wordmark" style="font-size:${o.word}px;align-items:center;gap:${o.word * 0.5}px">${MARK(o.mark)}<span style="display:flex;gap:${o.word * 0.38}px;align-items:baseline"><b style="color:#eef0f4">SMR</b><span>Core Technologies</span></span></div>` : ''}
+      <div class="tagline" style="font-size:${o.size}px;max-width:${o.maxW}px">We build software that <em>moves business forward.</em></div>
+      <div class="chips mono" style="font-size:${o.chip}px"><i>Web</i><i>Mobile</i><i>Desktop</i><i>AI</i><i>SaaS</i><i>Cloud</i></div>
+      <div class="mono" style="font-size:${o.url}px;color:#6f7684">smrcoretechnologies.com</div>
+    </div>
+    <div style="position:absolute;left:${o.coreLeft}px;top:${o.coreTop}px">${CORE(o.core[0], o.core[1])}</div>
+  </div>`;
+
+const variants = {
+  /* LinkedIn personal profile banner (1584×396). Content spans ~x 380–1250. */
+  banner: { w: 1584, h: 396, html: () => cover({
+    w: 1584, h: 396, cell: 44, left: 380, top: 62, gap: 16, mark: 34, word: 22,
+    size: 44, maxW: 500, chip: 13, url: 12, core: [400, 300], coreLeft: 860, coreTop: 48,
+  }) },
+
+  /* LinkedIn company page cover (1128×191). Content spans ~x 280–900. */
+  company: { w: 1128, h: 191, html: () => cover({
+    w: 1128, h: 191, cell: 30, left: 280, top: 30, gap: 10,
+    size: 26, maxW: 360, chip: 10, url: 9, core: [260, 150], coreLeft: 700, coreTop: 20,
+  }) },
+
+  /* X (Twitter) header (1500×500). Content spans ~x 330–1180. */
+  x: { w: 1500, h: 500, html: () => cover({
+    w: 1500, h: 500, cell: 48, left: 330, top: 120, gap: 18, mark: 36, word: 23,
+    size: 46, maxW: 500, chip: 13, url: 12, core: [420, 320], coreLeft: 790, coreTop: 90,
+  }) },
+
+  /* Square logo for the LinkedIn profile / company logo. */
+  logo: { w: 400, h: 400, html: () => `
+    <div class="canvas" style="width:400px;height:400px;display:grid;place-items:center;background:radial-gradient(260px 260px at 50% 42%,rgba(109,105,255,.32),transparent 70%),#07080b">
+      <div style="display:grid;justify-items:center;gap:18px;margin-top:-6px">
+        ${MARK(190, 1.4)}
+        <div class="wordmark" style="font-size:30px;flex-direction:column;align-items:center;gap:2px"><b style="font-size:44px;letter-spacing:.06em">SMR</b><span class="mono" style="font-size:12.5px;letter-spacing:.32em;color:#a1a7b4">Core Technologies</span></div>
+      </div>
+    </div>` },
+};
+
+/* Icon-only avatar: reads clearly at tiny sizes (feeds, comments, mentions). */
+variants.icon = { w: 400, h: 400, html: () => `
+  <div class="canvas" style="width:400px;height:400px;display:grid;place-items:center;background:radial-gradient(240px 240px at 50% 50%,rgba(109,105,255,.34),transparent 72%),#07080b">
+    ${MARK(230, 1.5)}
+  </div>` };
+
+const v = variants[new URLSearchParams(location.search).get('v') || 'banner'];
+document.getElementById('root').innerHTML = v.html();
+document.body.style.width = v.w + 'px';
+</script>
+</body>
+</html>

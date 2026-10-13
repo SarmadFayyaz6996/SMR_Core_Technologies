@@ -1,18 +1,21 @@
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { getDictionary } from '@/i18n/server';
 import { ProcessTimeline } from './ProcessTimeline';
 
-export function Process() {
+export async function Process() {
+  const { process: t } = await getDictionary();
+
   return (
     <section id="process" className="section" aria-labelledby="process-title">
       <div className="container-wide">
         <SectionHeader
           id="process-title"
           index="06"
-          eyebrow="Process"
-          title="From idea to impact."
-          lead="A clear, collaborative delivery process — so you always know what is happening, what comes next and why."
+          eyebrow={t.eyebrow}
+          title={t.title}
+          lead={t.lead}
         />
-        <ProcessTimeline />
+        <ProcessTimeline steps={t.steps} outputsLabel={t.outputsLabel} />
       </div>
     </section>
   );

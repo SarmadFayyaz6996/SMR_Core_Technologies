@@ -1,23 +1,27 @@
-import { industries } from '@/data/industries';
+import { getIndustries } from '@/data/industries';
 import { IndustryCard } from '@/components/cards/IndustryCard';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { getDictionary } from '@/i18n/server';
 import styles from './Industries.module.css';
 
-export function Industries() {
+export async function Industries() {
+  const dict = await getDictionary();
+  const t = dict.industries;
+
   return (
     <section id="industries" className="section" aria-labelledby="industries-title">
       <div className="container-wide">
         <SectionHeader
           id="industries-title"
           index="08"
-          eyebrow="Industries"
+          eyebrow={t.eyebrow}
           align="split"
-          title="Software for every kind of ambition."
-          lead="Domain-aware engineering for regulated, high-volume and fast-moving industries — from first MVP to enterprise scale."
+          title={t.title}
+          lead={t.lead}
         />
         <ul className={styles.grid}>
-          {industries.map((industry, i) => (
-            <IndustryCard key={industry.name} industry={industry} index={i} />
+          {getIndustries(dict).map((industry, i) => (
+            <IndustryCard key={industry.id} industry={industry} index={i} />
           ))}
         </ul>
       </div>

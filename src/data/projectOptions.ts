@@ -1,22 +1,30 @@
-export const projectTypes = [
-  { value: 'web-application', label: 'Web Application' },
-  { value: 'mobile-application', label: 'Mobile Application' },
-  { value: 'desktop-application', label: 'Desktop Application' },
-  { value: 'ai-integration', label: 'AI Integration' },
-  { value: 'saas-product', label: 'SaaS Product' },
-  { value: 'cloud-devops', label: 'Cloud / DevOps' },
-  { value: 'software-modernization', label: 'Software Modernization' },
-  { value: 'support-maintenance', label: 'Support & Maintenance' },
-  { value: 'other', label: 'Other' },
+import type { Dictionary } from '@/i18n/dictionaries/en';
+
+/** Option values are stable IDs (sent to the API); labels come from the dictionaries. */
+export const projectTypeValues = [
+  'web-application',
+  'mobile-application',
+  'desktop-application',
+  'ai-integration',
+  'saas-product',
+  'cloud-devops',
+  'software-modernization',
+  'support-maintenance',
+  'other',
 ] as const;
 
-export const budgetRanges = [
-  { value: 'under-5k', label: 'Under $5K' },
-  { value: '5k-15k', label: '$5K–$15K' },
-  { value: '15k-50k', label: '$15K–$50K' },
-  { value: '50k-plus', label: '$50K+' },
-  { value: 'not-sure', label: 'Not Sure' },
-] as const;
+export const budgetValues = ['under-5k', '5k-15k', '15k-50k', '50k-plus', 'not-sure'] as const;
 
-export type ProjectType = (typeof projectTypes)[number]['value'];
-export type BudgetRange = (typeof budgetRanges)[number]['value'];
+export type ProjectType = (typeof projectTypeValues)[number];
+export type BudgetRange = (typeof budgetValues)[number];
+
+export interface Option {
+  value: string;
+  label: string;
+}
+
+export const getProjectTypeOptions = (dict: Dictionary): Option[] =>
+  projectTypeValues.map((value) => ({ value, label: dict.contact.projectTypes[value] }));
+
+export const getBudgetOptions = (dict: Dictionary): Option[] =>
+  budgetValues.map((value) => ({ value, label: dict.contact.budgets[value] }));

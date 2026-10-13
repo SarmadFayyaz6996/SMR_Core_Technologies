@@ -1,28 +1,38 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { primaryNav } from '@/data/navigation';
-import { site } from '@/data/site';
+import type { NavLink } from '@/data/navigation';
+import type { Dictionary } from '@/i18n/dictionaries/en';
+import { stripLocale, type Locale } from '@/i18n/config';
+import { LocaleLink } from '@/i18n/LocaleLink';
 import { ButtonLink } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Logo } from '@/components/ui/Logo';
 import { cx } from '@/lib/cx';
 import { revealDelay } from '@/lib/style';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeToggle } from './ThemeToggle';
 import styles from './Navbar.module.css';
 
 const SCROLL_COMPACT_THRESHOLD = 24;
 const MENU_ID = 'mobile-menu';
 
-/** Section ids on the home page that map to nav links (e.g. "/#services"). */
-const sectionIds = primaryNav
-  .map((link) => link.href.split('#')[1])
-  .filter((id): id is string => Boolean(id));
+interface NavbarProps {
+  locale: Locale;
+  links: NavLink[];
+  t: Dictionary['nav'];
+  common: { letsTalk: string; startProject: string };
+  email: string;
+}
 
-export function Navbar() {
-  const pathname = usePathname();
+export function Navbar({ locale, links, t, common, email }: NavbarProps) {
+  /** Current path without the language prefix ("/fr/work" → "/work"). */
+  const pathname = stripLocale(usePathname());
+  /** Section ids on the home page that map to nav links (e.g. "/#services"). */
+  const sectionIds = links
+    .map((link) => link.href.split('#')[1])
+    .filter((id): id is string => Boolean(id));
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
@@ -59,6 +69,8 @@ export function Navbar() {
     );
     sections.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
+    // sectionIds is derived from links, which never changes after mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   // Mobile menu: lock scroll, close on Escape, trap focus.
@@ -117,24 +129,25 @@ export function Navbar() {
       <div className={cx('container-wide', styles.bar)}>
         <Logo className={styles.logo} />
 
-        <nav aria-label="Primary" className={styles.desktopNav}>
+        <nav aria-label={t.primaryLabel} className={styles.desktopNav}>
           <ul className={styles.links}>
-            {primaryNav.map((link) => (
+            {links.map((link) => (
               <li key={link.href}>
-                <Link
+                <LocaleLink
                   href={link.href}
                   className={styles.link}
                   aria-current={isActive(link.href) ? 'page' : undefined}
                 >
                   {link.label}
-                </Link>
+                </LocaleLink>
               </li>
             ))}
           </ul>
         </nav>
 
         <div className={styles.actions}>
-          <ThemeToggle />
+          <LanguageSwitcher locale={locale} label={t.language} />
+          <ThemeToggle labels={{ toLight: t.themeToLight, toDark: t.themeToDark }} />
           <ButtonLink
             href="/contact"
             size="sm"
@@ -142,7 +155,7 @@ export function Navbar() {
             className={styles.cta}
             icon="arrow-right"
           >
-            Let&apos;s Talk
+            {common.letsTalk}
           </ButtonLink>
           <button
             ref={toggleRef}
@@ -150,7 +163,7 @@ export function Navbar() {
             className={styles.menuButton}
             aria-expanded={open}
             aria-controls={MENU_ID}
-            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-label={open ? t.closeMenu : t.openMenu}
             onClick={() => setOpen((v) => !v)}
           >
             <span className={styles.burger} aria-hidden="true" />
@@ -165,19 +178,19 @@ export function Navbar() {
         inert={!open}
         aria-hidden={!open}
       >
-        <nav aria-label="Mobile" className={styles.mobileInner}>
+        <nav aria-label={t.mobileLabel} className={styles.mobileInner}>
           <ul className={styles.mobileLinks}>
-            {primaryNav.map((link, i) => (
+            {links.map((link, i) => (
               <li key={link.href} style={revealDelay(i)}>
-                <Link href={link.href} onClick={close} className={styles.mobileLink}>
+                <LocaleLink href={link.href} onClick={close} className={styles.mobileLink}>
                   <span className="mono">{String(i + 1).padStart(2, '0')}</span>
                   {link.label}
                   <Icon name="arrow-up-right" size={20} />
-                </Link>
+                </LocaleLink>
               </li>
             ))}
           </ul>
-          <div className={styles.mobileFooter} style={revealDelay(primaryNav.length)}>
+          <div className={styles.mobileFooter} style={revealDelay(links.length)}>
             <ButtonLink
               href="/contact"
               onClick={close}
@@ -186,10 +199,10 @@ export function Navbar() {
               block
               icon="arrow-right"
             >
-              Start a Project
+              {common.startProject}
             </ButtonLink>
-            <a href={`mailto:${site.email}`} className={styles.mobileEmail}>
-              {site.email}
+            <a href={`mailto:${email}`} className={styles.mobileEmail}>
+              {email}
             </a>
           </div>
         </nav>

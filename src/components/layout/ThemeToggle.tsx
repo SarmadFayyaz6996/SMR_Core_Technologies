@@ -25,7 +25,12 @@ const hasSavedPreference = () => {
   }
 };
 
-export function ThemeToggle({ className }: { className?: string }) {
+interface ThemeToggleProps {
+  labels: { toLight: string; toDark: string };
+  className?: string;
+}
+
+export function ThemeToggle({ labels, className }: ThemeToggleProps) {
   const theme = useSyncExternalStore(subscribe, getTheme, getServerTheme);
 
   // Follow live OS theme changes until the visitor picks a theme explicitly.
@@ -48,15 +53,15 @@ export function ThemeToggle({ className }: { className?: string }) {
     }
   }, []);
 
-  const nextLabel = theme === 'dark' ? 'light' : 'dark';
+  const label = theme === 'dark' ? labels.toLight : labels.toDark;
 
   return (
     <button
       type="button"
       onClick={toggle}
       className={cx(styles.toggle, className)}
-      aria-label={`Switch to ${nextLabel} theme`}
-      title={`Switch to ${nextLabel} theme`}
+      aria-label={label}
+      title={label}
     >
       <span className={styles.icons} data-theme-icon={theme}>
         <Icon name="moon" size={17} />

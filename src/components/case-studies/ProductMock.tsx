@@ -1,12 +1,18 @@
 import type { ReactNode } from 'react';
 import type { MockVariant } from '@/data/projects';
+import type { Dictionary } from '@/i18n/dictionaries/en';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { cssVars } from '@/lib/style';
 import styles from './ProductMock.module.css';
 
+type MockText = Dictionary['caseStudies']['mocks'];
+
 interface ProductMockProps {
   variant: MockVariant;
   name: string;
+  /** Accessible description of the illustration. */
+  label: string;
+  t: MockText;
 }
 
 const SIDEBAR_ICONS: IconName[] = ['layers', 'workflow', 'chart', 'document', 'shield'];
@@ -15,13 +21,10 @@ const SIDEBAR_ICONS: IconName[] = ['layers', 'workflow', 'chart', 'document', 's
  * Illustrative product UI rendered in HTML/CSS (no raster screenshots): crisp at
  * any density, themeable, and a fraction of the bytes of an image.
  */
-export function ProductMock({ variant, name }: ProductMockProps) {
+export function ProductMock({ variant, name, label, t }: ProductMockProps) {
   const slug = name.toLowerCase().replace(/\s+/g, '');
   return (
-    <figure
-      className={styles.window}
-      aria-label={`Illustrative interface of the ${name} concept product`}
-    >
+    <figure className={styles.window} aria-label={label}>
       <div className={styles.chrome} aria-hidden="true">
         <span className={styles.dots}>
           <i />
@@ -39,7 +42,7 @@ export function ProductMock({ variant, name }: ProductMockProps) {
             </span>
           ))}
         </nav>
-        <div className={styles.main}>{bodies[variant]}</div>
+        <div className={styles.main}>{bodies(t)[variant]}</div>
       </div>
     </figure>
   );
@@ -57,15 +60,15 @@ const Pill = ({
   </span>
 );
 
-const bodies: Record<MockVariant, ReactNode> = {
+const bodies = (t: MockText): Record<MockVariant, ReactNode> => ({
   workflow: (
     <>
       <header className={styles.head}>
-        <strong>Automations</strong>
-        <Pill tone="success">12 running</Pill>
+        <strong>{t.automations}</strong>
+        <Pill tone="success">{t.running}</Pill>
       </header>
       <div className={styles.flow}>
-        {['Request in', 'AI classify', 'Route', 'Approve'].map((step, i) => (
+        {t.flow.map((step, i) => (
           <span key={step} className={styles.flowStep} style={cssVars({ '--i': i })}>
             {step}
           </span>
@@ -73,10 +76,10 @@ const bodies: Record<MockVariant, ReactNode> = {
       </div>
       <ul className={styles.rows}>
         {[
-          ['Vendor onboarding — EU', 'AI routed', 'accent'],
-          ['Invoice dispute #2291', 'Awaiting approval', 'signal'],
-          ['Access request — Finance', 'Completed', 'success'],
-          ['Contract renewal Q4', 'AI routed', 'accent'],
+          [t.rows[0], t.aiRouted, 'accent'],
+          [t.rows[1], t.awaitingApproval, 'signal'],
+          [t.rows[2], t.completed, 'success'],
+          [t.rows[3], t.aiRouted, 'accent'],
         ].map(([title, status, tone]) => (
           <li key={title}>
             <span className={styles.rowTitle}>{title}</span>
@@ -89,8 +92,8 @@ const bodies: Record<MockVariant, ReactNode> = {
   clinical: (
     <>
       <header className={styles.head}>
-        <strong>Today · Clinic North</strong>
-        <Pill tone="accent">28 appointments</Pill>
+        <strong>{t.clinicToday}</strong>
+        <Pill tone="accent">{t.appointments}</Pill>
       </header>
       <div className={styles.calendar}>
         {['Dr. Ahmed', 'Dr. Patel', 'Dr. Lewis'].map((doc, c) => (
@@ -115,14 +118,14 @@ const bodies: Record<MockVariant, ReactNode> = {
   commerce: (
     <>
       <header className={styles.head}>
-        <strong>Inventory · All stores</strong>
-        <Pill tone="success">Synced</Pill>
+        <strong>{t.inventoryAll}</strong>
+        <Pill tone="success">{t.synced}</Pill>
       </header>
       <div className={styles.kpis}>
         {[
-          ['Sales today', '$24.8k'],
-          ['Orders', '612'],
-          ['Low stock', '4'],
+          [t.salesToday, '$24.8k'],
+          [t.orders, '612'],
+          [t.lowStock, '4'],
         ].map(([label, value]) => (
           <div key={label} className={styles.kpi}>
             <span>{label}</span>
@@ -132,9 +135,9 @@ const bodies: Record<MockVariant, ReactNode> = {
       </div>
       <ul className={styles.rows}>
         {[
-          ['SKU-1042 Headset', 82],
-          ['SKU-2210 Dock', 46],
-          ['SKU-0871 Cable kit', 14],
+          [t.skus[0], 82],
+          [t.skus[1], 46],
+          [t.skus[2], 14],
         ].map(([sku, level]) => (
           <li key={sku}>
             <span className={styles.rowTitle}>{sku}</span>
@@ -151,8 +154,8 @@ const bodies: Record<MockVariant, ReactNode> = {
   analytics: (
     <>
       <header className={styles.head}>
-        <strong>Migration progress</strong>
-        <Pill tone="signal">7 / 12 domains</Pill>
+        <strong>{t.migrationProgress}</strong>
+        <Pill tone="signal">{t.domains}</Pill>
       </header>
       <div className={styles.progress}>
         <span style={cssVars({ '--v': '58%' })} />
@@ -163,9 +166,9 @@ const bodies: Record<MockVariant, ReactNode> = {
         ))}
       </div>
       <div className={styles.legend}>
-        <span data-tone="muted">Legacy</span>
-        <span data-tone="accent">Modern platform</span>
+        <span data-tone="muted">{t.legacy}</span>
+        <span data-tone="accent">{t.modernPlatform}</span>
       </div>
     </>
   ),
-};
+});

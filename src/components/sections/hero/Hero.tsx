@@ -1,16 +1,13 @@
-import Link from 'next/link';
 import { ButtonLink } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Magnetic } from '@/components/ui/Magnetic';
 import { PointerField } from '@/components/ui/PointerField';
+import { LocaleLink } from '@/i18n/LocaleLink';
+import { getDictionary } from '@/i18n/server';
 import { cx } from '@/lib/cx';
 import { cssVars } from '@/lib/style';
 import { HeroVisual } from './HeroVisual';
 import styles from './Hero.module.css';
-
-const HEADLINE_LEAD = ['We', 'build', 'software', 'that'];
-const HEADLINE_ACCENT = ['moves', 'business', 'forward.'];
-const CAPABILITIES = ['Web', 'Mobile', 'Desktop', 'AI', 'Cloud'];
 
 /** Each word slides up from its own mask; real spaces keep the text readable to AT. */
 function Word({ text, index, accent }: { text: string; index: number; accent?: number }) {
@@ -28,7 +25,14 @@ function Word({ text, index, accent }: { text: string; index: number; accent?: n
   );
 }
 
-export function Hero() {
+export async function Hero() {
+  const dict = await getDictionary();
+  const t = dict.hero;
+  const lead = t.titleLead.split(' ');
+  // The gradient spans the accent words; `--a` positions each word within it.
+  const accent = t.titleAccent.split(' ');
+  const accentStep = accent.length > 1 ? 2 / (accent.length - 1) : 0;
+
   return (
     <PointerField as="section" className={styles.hero} aria-labelledby="hero-title">
       <div className={cx('grid-bg', styles.grid)} aria-hidden="true" />
@@ -36,39 +40,36 @@ export function Hero() {
 
       <div className={cx('container-wide', styles.inner)}>
         <div className={styles.copy}>
-          <Link href="/#ai" className={styles.pill}>
-            <span className={styles.pillTag}>New</span>
-            AI integration for existing products
+          <LocaleLink href="/#ai" className={styles.pill}>
+            <span className={styles.pillTag}>{t.pillTag}</span>
+            {t.pill}
             <Icon name="arrow-right" size={14} />
-          </Link>
+          </LocaleLink>
 
           <h1 id="hero-title" className={styles.title}>
-            {HEADLINE_LEAD.map((w, i) => (
-              <Word key={w} text={w} index={i} />
+            {lead.map((w, i) => (
+              <Word key={`l${i}`} text={w} index={i} />
             ))}
-            {HEADLINE_ACCENT.map((w, i) => (
-              <Word key={w} text={w} index={HEADLINE_LEAD.length + i} accent={i} />
+            {accent.map((w, i) => (
+              <Word key={`a${i}`} text={w} index={lead.length + i} accent={i * accentStep} />
             ))}
           </h1>
 
-          <p className={styles.lead}>
-            We design and engineer high-performance web, mobile, desktop and AI-powered software
-            that helps ambitious businesses build, scale and evolve.
-          </p>
+          <p className={styles.lead}>{t.lead}</p>
 
           <div className={styles.ctas}>
             <Magnetic>
               <ButtonLink href="/contact" size="lg" variant="primary" icon="arrow-right">
-                Start a Project
+                {dict.common.startProject}
               </ButtonLink>
             </Magnetic>
             <ButtonLink href="/work" size="lg" variant="secondary">
-              Explore Our Work
+              {dict.common.exploreWork}
             </ButtonLink>
           </div>
 
-          <ul className={styles.capabilities} aria-label="What we build">
-            {CAPABILITIES.map((c) => (
+          <ul className={styles.capabilities} aria-label={t.capabilitiesLabel}>
+            {t.capabilities.map((c) => (
               <li key={c} className="mono">
                 {c}
               </li>
@@ -77,7 +78,9 @@ export function Hero() {
         </div>
 
         <div className={styles.visualWrap}>
-          <HeroVisual />
+          <HeroVisual
+            t={{ visualLabel: t.visualLabel, deploy: t.deploy, ready: t.ready, latency: t.latency }}
+          />
         </div>
       </div>
     </PointerField>

@@ -127,13 +127,13 @@ function ModuleNode({ module, index }: { module: Module; index: number }) {
   );
 }
 
-export function HeroVisual() {
+interface HeroVisualProps {
+  t: { visualLabel: string; deploy: string; ready: string; latency: string };
+}
+
+export function HeroVisual({ t }: HeroVisualProps) {
   return (
-    <div
-      className={`corners ${styles.visual}`}
-      role="img"
-      aria-label="Illustration of a software core connected to AI, web, API, cloud, mobile and desktop modules with data flowing between them."
-    >
+    <div className={`corners ${styles.visual}`} role="img" aria-label={t.visualLabel}>
       <div className={styles.layerBack} aria-hidden="true">
         <svg viewBox="0 0 600 600" className={styles.svg}>
           <defs>
@@ -263,8 +263,8 @@ export function HeroVisual() {
       <div className={styles.deployPanel} aria-hidden="true">
         <div className={styles.deployHead}>
           <span className={styles.deployDot} />
-          <span>Deploy · production</span>
-          <span className={styles.deployOk}>Ready</span>
+          <span>{t.deploy}</span>
+          <span className={styles.deployOk}>{t.ready}</span>
         </div>
         <div className={styles.bars}>
           {[42, 58, 36, 70, 52, 84, 64, 92, 76, 88].map((h, i) => (
@@ -272,7 +272,7 @@ export function HeroVisual() {
           ))}
         </div>
         <div className={styles.deployFoot}>
-          <span>p95 latency</span>
+          <span>{t.latency}</span>
           <strong>84 ms</strong>
         </div>
       </div>

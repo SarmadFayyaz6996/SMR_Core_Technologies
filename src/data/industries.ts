@@ -1,25 +1,23 @@
 import type { IconName } from '@/components/ui/Icon';
+import type { Dictionary } from '@/i18n/dictionaries/en';
 
-export interface Industry {
-  name: string;
-  icon: IconName;
-  focus: string;
-}
+type IndustryId = keyof Dictionary['industries']['items'];
 
 /** Sectors we design for. These describe capability, not specific clients. */
-export const industries: Industry[] = [
-  { name: 'Healthcare', icon: 'pulse', focus: 'Patient workflows, scheduling and compliant data.' },
-  { name: 'FinTech', icon: 'card', focus: 'Secure payments, ledgers and real-time reporting.' },
-  { name: 'Retail', icon: 'bag', focus: 'POS, inventory and omnichannel commerce.' },
-  { name: 'Real Estate', icon: 'building', focus: 'Property, tenant and lease management.' },
-  { name: 'Logistics', icon: 'truck', focus: 'Fleet tracking, routing and warehouse systems.' },
-  { name: 'Education', icon: 'graduation', focus: 'Learning platforms and student management.' },
-  { name: 'Manufacturing', icon: 'factory', focus: 'Production planning and shop-floor data.' },
-  {
-    name: 'Professional Services',
-    icon: 'briefcase',
-    focus: 'Client portals, billing and resource planning.',
-  },
-  { name: 'Startups', icon: 'rocket', focus: 'MVPs that are built to become products.' },
-  { name: 'Enterprise', icon: 'globe', focus: 'Modernization and integration at scale.' },
+const industryData: { id: IndustryId; icon: IconName }[] = [
+  { id: 'healthcare', icon: 'pulse' },
+  { id: 'fintech', icon: 'card' },
+  { id: 'retail', icon: 'bag' },
+  { id: 'realEstate', icon: 'building' },
+  { id: 'logistics', icon: 'truck' },
+  { id: 'education', icon: 'graduation' },
+  { id: 'manufacturing', icon: 'factory' },
+  { id: 'professional', icon: 'briefcase' },
+  { id: 'startups', icon: 'rocket' },
+  { id: 'enterprise', icon: 'globe' },
 ];
+
+export const getIndustries = (dict: Dictionary) =>
+  industryData.map((i) => ({ ...i, ...dict.industries.items[i.id] }));
+
+export type Industry = ReturnType<typeof getIndustries>[number];

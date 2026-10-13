@@ -1,27 +1,32 @@
-import { caseStudies } from '@/data/projects';
+import { getCaseStudies } from '@/data/projects';
 import { ButtonLink } from '@/components/ui/Button';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { Tabs } from '@/components/ui/Tabs';
+import { getDictionary } from '@/i18n/server';
 import { cx } from '@/lib/cx';
 import { CaseStudyDetail } from './CaseStudyDetail';
 import styles from './CaseStudies.module.css';
 
-export function CaseStudies() {
+export async function CaseStudies() {
+  const dict = await getDictionary();
+  const t = dict.caseStudies;
+  const caseStudies = getCaseStudies(dict);
+
   return (
     <section id="work" className="section" aria-labelledby="work-title">
       <div className="container-wide">
         <SectionHeader
           id="work-title"
           index="03"
-          eyebrow="Case studies"
+          eyebrow={t.eyebrow}
           align="split"
-          title="Engineering, shown in detail."
-          lead="Demo case studies that walk through how we frame a problem, design the architecture and measure the outcome."
+          title={t.title}
+          lead={t.lead}
         />
 
         <div data-reveal>
           <Tabs
-            label="Case studies"
+            label={t.tabsLabel}
             orientation="vertical"
             classNames={{
               root: styles.showcase,
@@ -48,7 +53,7 @@ export function CaseStudies() {
 
         <div className={styles.footer}>
           <ButtonLink href="/work" variant="secondary" icon="arrow-right">
-            View all work
+            {t.viewAll}
           </ButtonLink>
         </div>
       </div>

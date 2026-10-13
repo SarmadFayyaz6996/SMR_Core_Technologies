@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { LocaleLink as Link } from '@/i18n/LocaleLink';
 import type { Service } from '@/data/services';
 import { Icon } from '@/components/ui/Icon';
 import { revealDelay } from '@/lib/style';
@@ -7,9 +7,10 @@ import styles from './ServiceCard.module.css';
 interface ServiceCardProps {
   service: Service;
   index: number;
+  learnMore: string;
 }
 
-export function ServiceCard({ service, index }: ServiceCardProps) {
+export function ServiceCard({ service, index, learnMore }: ServiceCardProps) {
   return (
     <li className={styles.card}>
       {/* Content (not the cell) reveals, so the hairline grid never shows gaps. */}
@@ -28,7 +29,7 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
         </h3>
         <p className={styles.summary}>{service.summary}</p>
         <span className={styles.more} aria-hidden="true">
-          Learn more
+          {learnMore}
           <Icon name="arrow-right" size={14} />
         </span>
       </div>

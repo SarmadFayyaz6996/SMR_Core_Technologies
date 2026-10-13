@@ -1,13 +1,16 @@
 import type { ReactNode } from 'react';
-import type { Solution } from '@/data/solutions';
+import type { SolutionVisualKind } from '@/data/solutions';
+import type { Dictionary } from '@/i18n/dictionaries/en';
 import { cssVars } from '@/lib/style';
 import styles from './SolutionVisual.module.css';
 
 /** Small, decorative product vignettes for each concept solution. */
-export function SolutionVisual({ visual }: { visual: Solution['visual'] }) {
+type VisualText = Dictionary['solutions']['visuals'];
+
+export function SolutionVisual({ visual, t }: { visual: SolutionVisualKind; t: VisualText }) {
   return (
     <div className={styles.frame} aria-hidden="true">
-      {visuals[visual]}
+      {visuals(t)[visual]}
     </div>
   );
 }
@@ -19,17 +22,17 @@ const chartPath = (() => {
   return { line, area: `${line} L400 100 L0 100 Z` };
 })();
 
-const visuals: Record<Solution['visual'], ReactNode> = {
+const visuals = (t: VisualText): Record<SolutionVisualKind, ReactNode> => ({
   assistant: (
     <div className={styles.chat}>
-      <div className={styles.bubbleUser}>Which invoices are overdue this week?</div>
+      <div className={styles.bubbleUser}>{t.chatQuestion}</div>
       <div className={styles.bubbleAi}>
         <span className={styles.aiTag}>AI</span>
         <div>
-          <p>4 invoices are overdue, totalling $18,420.</p>
+          <p>{t.chatAnswer}</p>
           <div className={styles.chips}>
-            <span>Send reminders</span>
-            <span>View report</span>
+            <span>{t.sendReminders}</span>
+            <span>{t.viewReport}</span>
           </div>
         </div>
       </div>
@@ -42,7 +45,7 @@ const visuals: Record<Solution['visual'], ReactNode> = {
   ),
   kanban: (
     <div className={styles.kanban}>
-      {['To do', 'In progress', 'Done'].map((col, c) => (
+      {[t.todo, t.inProgress, t.done].map((col, c) => (
         <div key={col} className={styles.column}>
           <span className={styles.colTitle}>{col}</span>
           {Array.from({ length: 3 - (c === 2 ? 1 : 0) }, (_, i) => (
@@ -73,9 +76,9 @@ const visuals: Record<Solution['visual'], ReactNode> = {
   pos: (
     <div className={styles.pos}>
       {[
-        ['Wireless headset', '$89.00'],
-        ['USB-C dock', '$129.00'],
-        ['Cable kit', '$24.00'],
+        [t.posItems[0], '$89.00'],
+        [t.posItems[1], '$129.00'],
+        [t.posItems[2], '$24.00'],
       ].map(([item, price]) => (
         <div key={item} className={styles.line}>
           <span>{item}</span>
@@ -83,11 +86,11 @@ const visuals: Record<Solution['visual'], ReactNode> = {
         </div>
       ))}
       <div className={styles.total}>
-        <span>Total</span>
+        <span>{t.total}</span>
         <strong>$242.00</strong>
       </div>
       <div className={styles.stock}>
-        <span>Stock synced · 3 stores</span>
+        <span>{t.stockSynced}</span>
         <i />
       </div>
     </div>
@@ -106,9 +109,9 @@ const visuals: Record<Solution['visual'], ReactNode> = {
     <div className={styles.analytics}>
       <div className={styles.kpis}>
         {[
-          ['Revenue', '+12.4%'],
-          ['Active users', '+8.1%'],
-          ['Churn', '−1.3%'],
+          [t.revenue, '+12.4%'],
+          [t.activeUsers, '+8.1%'],
+          [t.churn, '−1.3%'],
         ].map(([label, delta]) => (
           <div key={label} className={styles.kpi}>
             <span>{label}</span>
@@ -128,4 +131,4 @@ const visuals: Record<Solution['visual'], ReactNode> = {
       </svg>
     </div>
   ),
-};
+});

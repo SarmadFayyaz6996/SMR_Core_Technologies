@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { LocaleLink as Link } from '@/i18n/LocaleLink';
 import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from 'react';
 import { cx } from '@/lib/cx';
 import { Icon, type IconName } from './Icon';

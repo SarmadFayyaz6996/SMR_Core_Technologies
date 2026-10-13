@@ -1,15 +1,14 @@
-import { techLayers, type TechLayer } from '@/data/technologies';
+import { getTechLayers, type TechLayer } from '@/data/technologies';
 import { Icon } from '@/components/ui/Icon';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { Tabs } from '@/components/ui/Tabs';
+import { format } from '@/i18n/format';
+import { getDictionary } from '@/i18n/server';
 import { cx } from '@/lib/cx';
 import { cssVars } from '@/lib/style';
 import styles from './TechnologySection.module.css';
 
-/** Running "atomic number" across all layers, so tiles read like a periodic table. */
-const atomicStart = techLayers.map((_, i) =>
-  techLayers.slice(0, i).reduce((sum, layer) => sum + layer.technologies.length, 1),
-);
+const pad = (n: number) => String(n).padStart(2, '0');
 
 function LayerTab({ layer, index }: { layer: TechLayer; index: number }) {
   return (
@@ -24,20 +23,26 @@ function LayerTab({ layer, index }: { layer: TechLayer; index: number }) {
   );
 }
 
-function LayerPanel({ layer, index }: { layer: TechLayer; index: number }) {
+interface LayerPanelProps {
+  layer: TechLayer;
+  /** e.g. "Layer 02 / 06", already localized. */
+  label: string;
+  /** Running "atomic number" of the first tile, so tiles read like a periodic table. */
+  atomicStart: number;
+}
+
+function LayerPanel({ layer, label, atomicStart }: LayerPanelProps) {
   return (
     <div className={styles.detail}>
       <div className={styles.detailHead}>
-        <p className={cx('mono', styles.detailLabel)}>
-          Layer {String(index + 1).padStart(2, '0')} / {String(techLayers.length).padStart(2, '0')}
-        </p>
+        <p className={cx('mono', styles.detailLabel)}>{label}</p>
         <h3 className={styles.detailTitle}>{layer.name}</h3>
         <p className={styles.detailText}>{layer.description}</p>
       </div>
       <ul className={styles.tiles}>
         {layer.technologies.map((tech, i) => (
           <li key={tech.name} className={styles.tile} style={cssVars({ '--i': i })}>
-            <span className={cx('mono', styles.atomic)}>{atomicStart[index] + i}</span>
+            <span className={cx('mono', styles.atomic)}>{atomicStart + i}</span>
             <span className={styles.symbol} aria-hidden="true">
               {tech.symbol}
             </span>
@@ -50,22 +55,29 @@ function LayerPanel({ layer, index }: { layer: TechLayer; index: number }) {
   );
 }
 
-export function TechnologySection() {
+export async function TechnologySection() {
+  const dict = await getDictionary();
+  const t = dict.technology;
+  const layers = getTechLayers(dict);
+  const atomicStart = layers.map((_, i) =>
+    layers.slice(0, i).reduce((sum, layer) => sum + layer.technologies.length, 1),
+  );
+
   return (
     <section id="technology" className="section section--alt" aria-labelledby="technology-title">
       <div className="container-wide">
         <SectionHeader
           id="technology-title"
           index="05"
-          eyebrow="Technology"
+          eyebrow={t.eyebrow}
           align="split"
-          title="A modern stack, chosen with intent."
-          lead="Every layer of the systems we build — from AI to infrastructure — uses proven technology selected for performance, maintainability and long-term support."
+          title={t.title}
+          lead={t.lead}
         />
 
         <div data-reveal>
           <Tabs
-            label="Technology stack layers"
+            label={t.tabsLabel}
             orientation="vertical"
             hoverActivate
             classNames={{
@@ -74,11 +86,16 @@ export function TechnologySection() {
               tab: styles.plate,
               panel: styles.panel,
             }}
-            tabs={techLayers.map((layer, i) => (
+            tabs={layers.map((layer, i) => (
               <LayerTab key={layer.id} layer={layer} index={i} />
             ))}
-            panels={techLayers.map((layer, i) => (
-              <LayerPanel key={layer.id} layer={layer} index={i} />
+            panels={layers.map((layer, i) => (
+              <LayerPanel
+                key={layer.id}
+                layer={layer}
+                label={format(t.layerOf, { i: pad(i + 1), n: pad(layers.length) })}
+                atomicStart={atomicStart[i]}
+              />
             ))}
           />
         </div>

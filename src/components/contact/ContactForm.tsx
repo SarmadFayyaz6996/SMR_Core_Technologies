@@ -1,14 +1,18 @@
 'use client';
 
-import Link from 'next/link';
 import { useId, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react';
-import { budgetRanges, projectTypes } from '@/data/projectOptions';
+import type { Option } from '@/data/projectOptions';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
+import type { Dictionary } from '@/i18n/dictionaries/en';
+import { format } from '@/i18n/format';
+import { LocaleLink } from '@/i18n/LocaleLink';
 import {
   MESSAGE_MAX,
+  MESSAGE_MIN,
   emptyContact,
   validateContact,
+  type ContactErrorCode,
   type ContactErrors,
   type ContactField,
   type ContactPayload,
@@ -31,9 +35,13 @@ const FIELD_ORDER: ContactField[] = [
 
 interface ContactFormProps {
   initial?: Partial<ContactPayload>;
+  t: Dictionary['contact'];
+  projectTypes: Option[];
+  budgets: Option[];
 }
 
-export function ContactForm({ initial }: ContactFormProps) {
+export function ContactForm({ initial, t, projectTypes, budgets: budgetRanges }: ContactFormProps) {
+  const f = t.form;
   const id = useId();
   const formRef = useRef<HTMLFormElement>(null);
   const [values, setValues] = useState<ContactPayload>({ ...emptyContact, ...initial });
@@ -43,8 +51,12 @@ export function ContactForm({ initial }: ContactFormProps) {
   const [submitted, setSubmitted] = useState(false);
 
   const errors: ContactErrors = validateContact(values);
-  const visibleError = (field: ContactField) =>
-    submitted || touched[field] ? errors[field] : undefined;
+  const message = (code: ContactErrorCode) =>
+    format(t.errors[code], { min: MESSAGE_MIN, max: MESSAGE_MAX });
+  const visibleError = (field: ContactField) => {
+    const code = submitted || touched[field] ? errors[field] : undefined;
+    return code ? message(code) : undefined;
+  };
   const fieldId = (field: string) => `${id}-${field}`;
 
   const onChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -77,16 +89,17 @@ export function ContactForm({ initial }: ContactFormProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
       });
-      const data: { ok: boolean; error?: string; errors?: ContactErrors } = await res.json();
+      const data: { ok: boolean; error?: ContactErrorCode; errors?: ContactErrors } =
+        await res.json();
       if (res.ok && data.ok) {
         setStatus('success');
         return;
       }
       if (data.errors) focusFirstError(data.errors);
-      setServerError(data.error ?? 'Some details need attention. Please review the form.');
+      setServerError(message(data.error ?? 'reviewForm'));
       setStatus('error');
     } catch {
-      setServerError('Network error — please check your connection and try again.');
+      setServerError(message('network'));
       setStatus('error');
     }
   };
@@ -105,18 +118,17 @@ export function ContactForm({ initial }: ContactFormProps) {
         <span className={styles.successIcon}>
           <Icon name="check" size={28} />
         </span>
-        <h2 className={styles.successTitle}>Thanks, {firstName} — message received.</h2>
+        <h2 className={styles.successTitle}>{format(f.successTitle, { name: firstName })}</h2>
         <p className={styles.successText}>
-          A senior engineer will review your project and reply to{' '}
-          <strong>{values.workEmail}</strong> within one business day.
+          {f.successBefore} <strong>{values.workEmail}</strong> {f.successAfter}
         </p>
         <ol className={styles.nextSteps}>
-          <li>We review your goals and constraints.</li>
-          <li>We schedule a 30-minute discovery call.</li>
-          <li>You receive a scoped proposal and estimate.</li>
+          {f.successSteps.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
         </ol>
         <Button variant="secondary" onClick={reset}>
-          Send another message
+          {f.sendAnother}
         </Button>
       </div>
     );
@@ -127,7 +139,13 @@ export function ContactForm({ initial }: ContactFormProps) {
     label: string,
     props: { type?: string; autoComplete: string; required?: boolean; placeholder?: string },
   ) => (
-    <Field id={fieldId(field)} label={label} required={props.required} error={visibleError(field)}>
+    <Field
+      id={fieldId(field)}
+      label={label}
+      required={props.required}
+      optionalLabel={f.optional}
+      error={visibleError(field)}
+    >
       <input
         id={fieldId(field)}
         name={field}
@@ -193,40 +211,46 @@ export function ContactForm({ initial }: ContactFormProps) {
       )}
 
       <div className={styles.row}>
-        {textField('fullName', 'Full name', {
+        {textField('fullName', f.fullName, {
           autoComplete: 'name',
           required: true,
-          placeholder: 'Jane Cooper',
+          placeholder: f.fullNamePlaceholder,
         })}
-        {textField('workEmail', 'Work email', {
+        {textField('workEmail', f.workEmail, {
           type: 'email',
           autoComplete: 'email',
           required: true,
-          placeholder: 'jane@company.com',
+          placeholder: f.workEmailPlaceholder,
         })}
       </div>
       <div className={styles.row}>
-        {textField('company', 'Company', {
+        {textField('company', f.company, {
           autoComplete: 'organization',
-          placeholder: 'Company name',
+          placeholder: f.companyPlaceholder,
         })}
-        {textField('phone', 'Phone', {
+        {textField('phone', f.phone, {
           type: 'tel',
           autoComplete: 'tel',
-          placeholder: '+1 555 000 0000',
+          placeholder: f.phonePlaceholder,
         })}
       </div>
 
-      {chipGroup('projectType', 'Project type', projectTypes)}
-      {chipGroup('budget', 'Budget range', budgetRanges)}
+      {chipGroup('projectType', f.projectType, projectTypes)}
+      {chipGroup('budget', f.budget, budgetRanges)}
 
-      <Field id={fieldId('message')} label="Message" required error={visibleError('message')}>
+      <Field
+        id={fieldId('message')}
+        label={f.message}
+        required
+        optionalLabel={f.optional}
+        error={visibleError('message')}
+      >
         <textarea
           id={fieldId('message')}
           name="message"
           rows={6}
           maxLength={MESSAGE_MAX}
-          placeholder="Tell us about your product, goals, timeline and any existing systems."
+          placeholder={f.messagePlaceholder}
           value={values.message}
           onChange={onChange}
           onBlur={() => onBlur('message')}
@@ -272,11 +296,11 @@ export function ContactForm({ initial }: ContactFormProps) {
             <Icon name="check" size={12} />
           </span>
           <span>
-            I agree to the{' '}
-            <Link href="/privacy" className={styles.link}>
-              privacy policy
-            </Link>{' '}
-            and consent to SMR Core Technologies contacting me about this enquiry.
+            {f.consentBefore}{' '}
+            <LocaleLink href="/privacy" className={styles.link}>
+              {f.consentLink}
+            </LocaleLink>{' '}
+            {f.consentAfter}
           </span>
         </label>
         <FieldError id={`${fieldId('consent')}-error`} message={visibleError('consent')} />
@@ -293,13 +317,13 @@ export function ContactForm({ initial }: ContactFormProps) {
           {status === 'submitting' ? (
             <>
               <span className={styles.spinner} aria-hidden="true" />
-              Sending…
+              {f.sending}
             </>
           ) : (
-            'Send message'
+            f.send
           )}
         </Button>
-        <p className={styles.note}>We usually reply within one business day.</p>
+        <p className={styles.note}>{f.note}</p>
       </div>
     </form>
   );
@@ -309,12 +333,14 @@ function Field({
   id,
   label,
   required,
+  optionalLabel,
   error,
   children,
 }: {
   id: string;
   label: string;
   required?: boolean;
+  optionalLabel: string;
   error?: string;
   children: ReactNode;
 }) {
@@ -325,7 +351,7 @@ function Field({
         {required ? (
           <span className={styles.required}>*</span>
         ) : (
-          <span className={styles.optional}>Optional</span>
+          <span className={styles.optional}>{optionalLabel}</span>
         )}
       </label>
       {children}

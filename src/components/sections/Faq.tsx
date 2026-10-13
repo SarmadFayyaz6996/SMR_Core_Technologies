@@ -1,20 +1,21 @@
-import type { FaqItem } from '@/data/faq';
 import { Icon } from '@/components/ui/Icon';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { getDictionary } from '@/i18n/server';
 import styles from './Faq.module.css';
 
 interface FaqProps {
-  items: FaqItem[];
   index?: string;
-  title?: string;
 }
 
 /** Native <details> accordion: accessible and functional without JavaScript. */
-export function Faq({ items, index, title = 'Questions, answered.' }: FaqProps) {
+export async function Faq({ index }: FaqProps) {
+  const { faq: t } = await getDictionary();
+  const items = t.items;
+
   return (
     <section id="faq" className="section section--alt" aria-labelledby="faq-title">
       <div className={`container-wide ${styles.layout}`}>
-        <SectionHeader id="faq-title" index={index} eyebrow="FAQ" title={title} />
+        <SectionHeader id="faq-title" index={index} eyebrow={t.eyebrow} title={t.title} />
         <div className={styles.list}>
           {items.map((item) => (
             <details key={item.question} className={styles.item} name="faq">

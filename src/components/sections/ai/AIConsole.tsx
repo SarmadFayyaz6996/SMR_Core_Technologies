@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { aiCapabilities, type AiCapability } from '@/data/ai';
+import type { AiCapability } from '@/data/ai';
 import { Icon } from '@/components/ui/Icon';
 import { cx } from '@/lib/cx';
 import { useReducedMotion } from '@/lib/useMediaQuery';
@@ -16,6 +16,14 @@ const RESPONSE_CHAR_MS = 13;
 const HOLD_BEFORE_ADVANCE_MS = 3800;
 const TICK_MS = 32;
 
+export interface ConsoleLabels {
+  you: string;
+  assistant: string;
+  stepsLabel: string;
+  capabilitiesLabel: string;
+  demoLabel: string;
+}
+
 const timeline = (c: AiCapability) => {
   const promptEnd = c.prompt.length * PROMPT_CHAR_MS;
   const stepsStart = promptEnd + THINK_MS;
@@ -28,10 +36,12 @@ function Run({
   capability,
   playing,
   onDone,
+  labels,
 }: {
   capability: AiCapability;
   playing: boolean;
   onDone: () => void;
+  labels: ConsoleLabels;
 }) {
   const reduced = useReducedMotion();
   const [elapsed, setElapsed] = useState(0);
@@ -78,14 +88,14 @@ function Run({
 
       <div className={styles.transcript}>
         <div className={styles.prompt}>
-          <span className={cx('mono', styles.role)}>You</span>
+          <span className={cx('mono', styles.role)}>{labels.you}</span>
           <p>
             {promptShown}
             {phase === 'typing' && <span className={styles.caret} />}
           </p>
         </div>
 
-        <ol className={styles.steps} aria-label="Processing steps">
+        <ol className={styles.steps} aria-label={labels.stepsLabel}>
           {capability.steps.map((step, i) => {
             const state =
               i < stepsDone
@@ -106,7 +116,7 @@ function Run({
 
         <div className={styles.response} data-visible={time >= t.responseStart || undefined}>
           <span className={cx('mono', styles.role, styles.roleAi)}>
-            <Icon name="sparkles" size={12} /> SMR AI
+            <Icon name="sparkles" size={12} /> {labels.assistant}
           </span>
           <p>
             {responseShown}
@@ -123,7 +133,12 @@ function Run({
   );
 }
 
-export function AIConsole() {
+interface AIConsoleProps {
+  capabilities: AiCapability[];
+  labels: ConsoleLabels;
+}
+
+export function AIConsole({ capabilities: aiCapabilities, labels }: AIConsoleProps) {
   const [active, setActive] = useState(0);
   const [userPicked, setUserPicked] = useState(false);
   const [inView, setInView] = useState(false);
@@ -150,7 +165,7 @@ export function AIConsole() {
       () => setActive((i) => (i + 1) % aiCapabilities.length),
       HOLD_BEFORE_ADVANCE_MS,
     );
-  }, [userPicked]);
+  }, [userPicked, aiCapabilities.length]);
 
   const pick = (index: number) => {
     window.clearTimeout(advanceRef.current);
@@ -162,7 +177,7 @@ export function AIConsole() {
 
   return (
     <div ref={rootRef} className={styles.console}>
-      <ul className={styles.capabilities} aria-label="AI capabilities">
+      <ul className={styles.capabilities} aria-label={labels.capabilitiesLabel}>
         {aiCapabilities.map((c, i) => (
           <li key={c.id}>
             <button
@@ -189,9 +204,15 @@ export function AIConsole() {
             <i />
             {capability.name}
           </span>
-          <span className="mono">Illustrative demo</span>
+          <span className="mono">{labels.demoLabel}</span>
         </div>
-        <Run key={capability.id} capability={capability} playing={inView} onDone={handleDone} />
+        <Run
+          key={capability.id}
+          capability={capability}
+          playing={inView}
+          onDone={handleDone}
+          labels={labels}
+        />
       </div>
     </div>
   );

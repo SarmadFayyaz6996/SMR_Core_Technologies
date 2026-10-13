@@ -1,11 +1,16 @@
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { ButtonLink } from '@/components/ui/Button';
+import { getAiCapabilities } from '@/data/ai';
+import { getDictionary } from '@/i18n/server';
 import { cx } from '@/lib/cx';
 import { AIConsole } from './AIConsole';
 import styles from './AISection.module.css';
 
 /** Always rendered in the dark theme — a deliberate, inverted "intelligence" band. */
-export function AISection() {
+export async function AISection() {
+  const dict = await getDictionary();
+  const t = dict.ai;
+
   return (
     <section
       id="ai"
@@ -21,21 +26,30 @@ export function AISection() {
         <SectionHeader
           id="ai-title"
           index="04"
-          eyebrow="Artificial intelligence"
+          eyebrow={t.eyebrow}
           align="split"
           title={
             <>
-              Make your software <span className="gradient-text">intelligent.</span>
+              {t.titleLead} <span className="gradient-text">{t.titleAccent}</span>
             </>
           }
-          lead="AI shouldn't be a feature added at the end. We help businesses integrate intelligent capabilities directly into their products, workflows and operations."
+          lead={t.lead}
         />
         <div data-reveal>
-          <AIConsole />
+          <AIConsole
+            capabilities={getAiCapabilities(dict)}
+            labels={{
+              you: t.you,
+              assistant: t.assistant,
+              stepsLabel: t.stepsLabel,
+              capabilitiesLabel: t.capabilitiesLabel,
+              demoLabel: t.demoLabel,
+            }}
+          />
         </div>
         <div className={styles.cta}>
           <ButtonLink href="/services/ai-integration" variant="secondary" icon="arrow-right">
-            Explore AI integration
+            {t.cta}
           </ButtonLink>
         </div>
       </div>

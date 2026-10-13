@@ -1,6 +1,9 @@
-/** Formats an ISO date (YYYY-MM-DD) as e.g. "Oct 1, 2026", independent of server timezone. */
-export const formatDate = (iso: string) =>
-  new Intl.DateTimeFormat('en-US', {
+/**
+ * Formats an ISO date (YYYY-MM-DD) in the visitor's language, independent of the
+ * server timezone: ("2026-10-01", "fr") → "1 oct. 2026".
+ */
+export const formatDate = (iso: string, locale: string) =>
+  new Intl.DateTimeFormat(locale, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

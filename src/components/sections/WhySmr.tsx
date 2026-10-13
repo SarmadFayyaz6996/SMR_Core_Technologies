@@ -1,11 +1,15 @@
-import { whySmr } from '@/data/principles';
+import { getWhySmr } from '@/data/principles';
 import { Icon } from '@/components/ui/Icon';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { getDictionary } from '@/i18n/server';
 import { cx } from '@/lib/cx';
 import { revealDelay } from '@/lib/style';
 import styles from './WhySmr.module.css';
 
-export function WhySmr() {
+export async function WhySmr() {
+  const dict = await getDictionary();
+  const t = dict.why;
+
   return (
     <section id="why" className="section section--alt" aria-labelledby="why-title">
       <div className="container-wide">
@@ -14,14 +18,14 @@ export function WhySmr() {
             <SectionHeader
               id="why-title"
               index="07"
-              eyebrow="Why SMR"
-              title="Engineering built for the long term."
-              lead="Software is a long-term asset. We build it the way you would want it maintained — carefully, transparently and with the next five years in mind."
+              eyebrow={t.eyebrow}
+              title={t.title}
+              lead={t.lead}
             />
           </div>
           <ul className={styles.list}>
-            {whySmr.map((item, i) => (
-              <li key={item.title} className={styles.item}>
+            {getWhySmr(dict).map((item, i) => (
+              <li key={item.id} className={styles.item}>
                 <div className={styles.itemInner} data-reveal style={revealDelay(i % 3)}>
                   <span className={cx('mono', styles.index)}>{String(i + 1).padStart(2, '0')}</span>
                   <Icon name={item.icon} size={20} className={styles.icon} />

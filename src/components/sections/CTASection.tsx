@@ -1,6 +1,7 @@
 import { ButtonLink } from '@/components/ui/Button';
 import { Magnetic } from '@/components/ui/Magnetic';
 import { PointerField } from '@/components/ui/PointerField';
+import { getDictionary } from '@/i18n/server';
 import { cx } from '@/lib/cx';
 import styles from './CTASection.module.css';
 
@@ -9,10 +10,9 @@ interface CTASectionProps {
   text?: string;
 }
 
-export function CTASection({
-  title = 'Have an idea worth building?',
-  text = "Let's turn your idea into software that creates real business value.",
-}: CTASectionProps) {
+export async function CTASection({ title, text }: CTASectionProps) {
+  const dict = await getDictionary();
+
   return (
     <section className={cx('section', styles.section)} aria-labelledby="cta-title">
       <div className="container-wide">
@@ -26,19 +26,19 @@ export function CTASection({
           </div>
           <div className={styles.content}>
             <h2 id="cta-title" className={styles.title} data-reveal>
-              {title}
+              {title ?? dict.cta.title}
             </h2>
             <p className={styles.text} data-reveal>
-              {text}
+              {text ?? dict.cta.text}
             </p>
             <div className={styles.actions} data-reveal>
               <Magnetic>
                 <ButtonLink href="/contact" variant="primary" size="lg" icon="arrow-right">
-                  Start a Project
+                  {dict.common.startProject}
                 </ButtonLink>
               </Magnetic>
               <ButtonLink href="/contact?topic=expert" variant="secondary" size="lg">
-                Talk to an Expert
+                {dict.common.talkToExpert}
               </ButtonLink>
             </div>
           </div>

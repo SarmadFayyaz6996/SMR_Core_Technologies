@@ -1,50 +1,53 @@
+import type { Dictionary } from '@/i18n/dictionaries/en';
+
 export interface NavLink {
   label: string;
+  /** Language-neutral path; LocaleLink adds the visitor's language prefix. */
   href: string;
 }
 
-export const primaryNav: NavLink[] = [
-  { label: 'Services', href: '/#services' },
-  { label: 'Solutions', href: '/#solutions' },
-  { label: 'Industries', href: '/#industries' },
-  { label: 'Work', href: '/work' },
-  { label: 'Technology', href: '/#technology' },
-  { label: 'About', href: '/#about' },
+export const getPrimaryNav = (dict: Dictionary): NavLink[] => [
+  { label: dict.nav.services, href: '/#services' },
+  { label: dict.nav.solutions, href: '/#solutions' },
+  { label: dict.nav.industries, href: '/#industries' },
+  { label: dict.nav.work, href: '/work' },
+  { label: dict.nav.technology, href: '/#technology' },
+  { label: dict.nav.about, href: '/#about' },
 ];
 
-export const footerNav: { title: string; links: NavLink[] }[] = [
+export const getFooterNav = ({ footer: f }: Dictionary): { title: string; links: NavLink[] }[] => [
   {
-    title: 'Company',
+    title: f.company,
     links: [
-      { label: 'About', href: '/#about' },
-      { label: 'Work', href: '/work' },
-      { label: 'Careers', href: '/careers' },
-      { label: 'Contact', href: '/contact' },
+      { label: f.about, href: '/#about' },
+      { label: f.work, href: '/work' },
+      { label: f.careers, href: '/careers' },
+      { label: f.contact, href: '/contact' },
     ],
   },
   {
-    title: 'Services',
+    title: f.services,
     links: [
-      { label: 'Web Development', href: '/services/web-application-development' },
-      { label: 'Mobile Development', href: '/services/mobile-application-development' },
-      { label: 'AI', href: '/services/ai-integration' },
-      { label: 'SaaS', href: '/services/saas-development' },
-      { label: 'Cloud', href: '/services/cloud-devops' },
-      { label: 'Software Support', href: '/services/software-support-modernization' },
+      { label: f.webDevelopment, href: '/services/web-application-development' },
+      { label: f.mobileDevelopment, href: '/services/mobile-application-development' },
+      { label: f.ai, href: '/services/ai-integration' },
+      { label: f.saas, href: '/services/saas-development' },
+      { label: f.cloud, href: '/services/cloud-devops' },
+      { label: f.softwareSupport, href: '/services/software-support-modernization' },
     ],
   },
   {
-    title: 'Resources',
+    title: f.resources,
     links: [
-      { label: 'Blog', href: '/insights' },
-      { label: 'Insights', href: '/insights' },
-      { label: 'FAQ', href: '/#faq' },
+      { label: f.blog, href: '/insights' },
+      { label: f.insights, href: '/insights' },
+      { label: f.faq, href: '/#faq' },
     ],
   },
 ];
 
-export const legalNav: NavLink[] = [
-  { label: 'Privacy Policy', href: '/privacy' },
-  { label: 'Terms & Conditions', href: '/terms' },
-  { label: 'Cookie Policy', href: '/cookies' },
+export const getLegalNav = ({ footer: f }: Dictionary): NavLink[] => [
+  { label: f.privacy, href: '/privacy' },
+  { label: f.terms, href: '/terms' },
+  { label: f.cookies, href: '/cookies' },
 ];

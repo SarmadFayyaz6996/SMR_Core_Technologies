@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { processSteps } from '@/data/process';
+import { format } from '@/i18n/format';
 import { cx } from '@/lib/cx';
 import { cssVars } from '@/lib/style';
 import styles from './ProcessTimeline.module.css';
@@ -13,7 +13,19 @@ const ACTIVATION_LINE = 0.55;
  * Scroll-driven timeline: progress is written straight to a CSS variable (no
  * re-render per frame); React state only changes when the active step changes.
  */
-export function ProcessTimeline() {
+interface ProcessStep {
+  title: string;
+  description: string;
+  outputs: string[];
+}
+
+interface ProcessTimelineProps {
+  steps: ProcessStep[];
+  /** e.g. "{title} outputs" — accessible label for each step's output list. */
+  outputsLabel: string;
+}
+
+export function ProcessTimeline({ steps: processSteps, outputsLabel }: ProcessTimelineProps) {
   const listRef = useRef<HTMLOListElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -88,7 +100,10 @@ export function ProcessTimeline() {
             <div className={styles.body}>
               <h3 className={styles.title}>{step.title}</h3>
               <p className={styles.description}>{step.description}</p>
-              <ul className={styles.outputs} aria-label={`${step.title} outputs`}>
+              <ul
+                className={styles.outputs}
+                aria-label={format(outputsLabel, { title: step.title })}
+              >
                 {step.outputs.map((o) => (
                   <li key={o}>{o}</li>
                 ))}

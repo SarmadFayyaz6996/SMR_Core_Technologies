@@ -1,4 +1,5 @@
-import { budgetRanges, projectTypes } from '@/data/projectOptions';
+import { budgetValues, projectTypeValues } from '@/data/projectOptions';
+import type { Dictionary } from '@/i18n/dictionaries/en';
 
 /** Shared by the client form and the API route so validation can never drift. */
 export interface ContactPayload {
@@ -15,7 +16,13 @@ export interface ContactPayload {
 }
 
 export type ContactField = Exclude<keyof ContactPayload, 'website'>;
-export type ContactErrors = Partial<Record<ContactField, string>>;
+
+/**
+ * Validation returns language-neutral error codes (keys of `contact.errors`);
+ * the form turns them into localized messages.
+ */
+export type ContactErrorCode = keyof Dictionary['contact']['errors'];
+export type ContactErrors = Partial<Record<ContactField, ContactErrorCode>>;
 
 export const MESSAGE_MIN = 20;
 export const MESSAGE_MAX = 4000;
@@ -23,35 +30,32 @@ const NAME_MAX = 120;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE_PATTERN = /^[+()\d\s.-]{7,20}$/;
-const projectValues = new Set<string>(projectTypes.map((p) => p.value));
-const budgetValues = new Set<string>(budgetRanges.map((b) => b.value));
+const projectSet = new Set<string>(projectTypeValues);
+const budgetSet = new Set<string>(budgetValues);
 
 export function validateContact(data: ContactPayload): ContactErrors {
   const errors: ContactErrors = {};
   const name = data.fullName.trim();
+  const email = data.workEmail.trim();
   const message = data.message.trim();
 
-  if (!name) errors.fullName = 'Please enter your full name.';
-  else if (name.length > NAME_MAX) errors.fullName = 'Please use a shorter name.';
+  if (!name) errors.fullName = 'fullNameRequired';
+  else if (name.length > NAME_MAX) errors.fullName = 'fullNameTooLong';
 
-  if (!data.workEmail.trim()) errors.workEmail = 'Please enter your work email.';
-  else if (!EMAIL_PATTERN.test(data.workEmail.trim()))
-    errors.workEmail = 'Please enter a valid email address.';
+  if (!email) errors.workEmail = 'workEmailRequired';
+  else if (!EMAIL_PATTERN.test(email)) errors.workEmail = 'workEmailInvalid';
 
-  if (data.company.length > NAME_MAX) errors.company = 'Please use a shorter company name.';
+  if (data.company.length > NAME_MAX) errors.company = 'companyTooLong';
 
-  if (data.phone.trim() && !PHONE_PATTERN.test(data.phone.trim()))
-    errors.phone = 'Please enter a valid phone number.';
+  if (data.phone.trim() && !PHONE_PATTERN.test(data.phone.trim())) errors.phone = 'phoneInvalid';
 
-  if (!projectValues.has(data.projectType)) errors.projectType = 'Please choose a project type.';
-  if (!budgetValues.has(data.budget)) errors.budget = 'Please choose a budget range.';
+  if (!projectSet.has(data.projectType)) errors.projectType = 'projectTypeRequired';
+  if (!budgetSet.has(data.budget)) errors.budget = 'budgetRequired';
 
-  if (message.length < MESSAGE_MIN)
-    errors.message = `Please tell us a little more (at least ${MESSAGE_MIN} characters).`;
-  else if (message.length > MESSAGE_MAX)
-    errors.message = `Please keep your message under ${MESSAGE_MAX} characters.`;
+  if (message.length < MESSAGE_MIN) errors.message = 'messageTooShort';
+  else if (message.length > MESSAGE_MAX) errors.message = 'messageTooLong';
 
-  if (!data.consent) errors.consent = 'Please agree to the privacy policy so we can reply.';
+  if (!data.consent) errors.consent = 'consentRequired';
 
   return errors;
 }
