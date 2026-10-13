@@ -4,7 +4,7 @@
   flex-direction: column;
   gap: var(--space-3);
   padding: clamp(var(--space-6), 2.4vw, var(--space-8));
-  min-height: 17rem;
+  min-height: 14rem;
   background: var(--bg);
   isolation: isolate;
   overflow: hidden;
@@ -48,7 +48,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-6);
 }
 
 .iconWrap {
