@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
+import { isLocale } from '@/i18n/config';
 import { emptyContact, validateContact, type ContactPayload } from '@/lib/contact';
+import { isEmailConfigured, sendLeadEmail } from '@/lib/mailer';
 
 const WEBHOOK_TIMEOUT_MS = 8000;
 
@@ -22,6 +24,17 @@ function normalize(body: unknown): ContactPayload {
   };
 }
 
+async function postToWebhook(url: string, data: ContactPayload) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    // `website: undefined` drops the honeypot field from the serialized lead.
+    body: JSON.stringify({ ...data, website: undefined, submittedAt: new Date().toISOString() }),
+    signal: AbortSignal.timeout(WEBHOOK_TIMEOUT_MS),
+  });
+  if (!res.ok) throw new Error(`Webhook responded with ${res.status}`);
+}
+
 export async function POST(request: Request) {
   let body: unknown;
   try {
@@ -40,27 +53,37 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, errors }, { status: 422 });
   }
 
+  // Which page/language the enquiry came from (for the email).
+  const referer = request.headers.get('referer') ?? '';
+  const firstSegment = referer ? new URL(referer).pathname.split('/')[1] : '';
+  const context = { locale: isLocale(firstSegment) ? firstSegment : undefined, pageUrl: referer };
+
   const webhook = process.env.CONTACT_WEBHOOK_URL;
-  if (webhook) {
-    try {
-      const res = await fetch(webhook, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // `website: undefined` drops the honeypot field from the serialized lead.
-        body: JSON.stringify({
-          ...data,
-          website: undefined,
-          submittedAt: new Date().toISOString(),
-        }),
-        signal: AbortSignal.timeout(WEBHOOK_TIMEOUT_MS),
-      });
-      if (!res.ok) throw new Error(`Webhook responded with ${res.status}`);
-    } catch (error) {
-      console.error('Contact webhook failed', error);
-      // Error codes (not sentences) — the form shows them in the visitor's language.
-      return NextResponse.json({ ok: false, error: 'deliveryFailed' }, { status: 502 });
+  const deliveries: Promise<void>[] = [];
+  if (isEmailConfigured()) deliveries.push(sendLeadEmail(data, context));
+  if (webhook) deliveries.push(postToWebhook(webhook, data));
+
+  if (deliveries.length === 0) {
+    // Never tell a real visitor "received" when the message goes nowhere.
+    if (process.env.NODE_ENV === 'production') {
+      console.error(
+        'Contact form: no delivery configured (set RESEND_API_KEY or CONTACT_WEBHOOK_URL)',
+      );
+      return NextResponse.json({ ok: false, error: 'deliveryFailed' }, { status: 503 });
     }
+    return NextResponse.json({ ok: true, demo: true });
   }
 
+  const results = await Promise.allSettled(deliveries);
+  const failed = results.filter((r) => r.status === 'rejected');
+  failed.forEach((r) =>
+    console.error('Contact delivery failed', (r as PromiseRejectedResult).reason),
+  );
+
+  // Success if at least one channel delivered the lead.
+  if (failed.length === results.length) {
+    // Error codes (not sentences) — the form shows them in the visitor's language.
+    return NextResponse.json({ ok: false, error: 'deliveryFailed' }, { status: 502 });
+  }
   return NextResponse.json({ ok: true });
 }
