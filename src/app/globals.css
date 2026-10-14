@@ -42,7 +42,7 @@
   --space-20: 5rem;
   --space-24: 6rem;
 
-  --section-y: clamp(4rem, 2.5rem + 5vw, 7rem);
+  --section-y: clamp(5rem, 3rem + 8vw, 10rem);
   --gutter: clamp(1rem, 0.5rem + 2.5vw, 2rem);
   --container: 76rem;
   --container-wide: 90rem;

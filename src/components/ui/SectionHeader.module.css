@@ -2,7 +2,7 @@
   display: grid;
   gap: var(--space-5);
   max-width: 46rem;
-  margin-bottom: clamp(var(--space-8), 3.5vw, var(--space-12));
+  margin-bottom: clamp(var(--space-10), 5vw, var(--space-16));
 }
 
 .center {
