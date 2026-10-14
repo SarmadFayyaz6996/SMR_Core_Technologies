@@ -65,6 +65,15 @@
   gap: var(--space-3);
 }
 
+/* Phones: two narrow columns — left-align so multi-line labels read cleanly next to the icon. */
+@media (max-width: 719px) {
+  .item {
+    justify-content: flex-start;
+    text-align: left;
+    padding-inline: var(--space-4);
+  }
+}
+
 .icon {
   flex: none;
   color: var(--accent-text);

@@ -186,11 +186,13 @@
 /* Periodic-table style element tile. */
 .tile {
   position: relative;
-  display: grid;
+  /* Column layout: symbol always sits just under the number (aligned across the row),
+     name + note sit at the bottom regardless of how many lines they wrap to. */
+  display: flex;
+  flex-direction: column;
   gap: var(--space-1);
   padding: calc(var(--space-4) + 1.4rem) var(--space-4) var(--space-4);
   min-height: 9.5rem;
-  align-content: end;
   border-radius: var(--radius-md);
   background: var(--surface);
   box-shadow: inset 0 0 0 1px var(--border-strong);
@@ -224,10 +226,11 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
 .techName {
+  margin-top: auto;
   font-weight: 600;
   font-size: 0.9375rem;
   line-height: 1.25;

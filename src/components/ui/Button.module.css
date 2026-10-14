@@ -133,3 +133,16 @@
   opacity: 0.6;
   pointer-events: none;
 }
+
+/* Small phones: long translated labels may wrap onto two lines rather than overflow. */
+@media (max-width: 479px) {
+  .button {
+    max-width: 100%;
+    height: auto;
+    min-height: var(--btn-h);
+    padding-block: 0.55rem;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.25;
+  }
+}

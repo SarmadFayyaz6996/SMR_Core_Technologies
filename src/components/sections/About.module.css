@@ -33,8 +33,9 @@
 .title {
   position: relative;
   z-index: 1;
-  font-size: var(--fs-h1);
-  line-height: 1.04;
+  /* A little larger than other section titles (it's a statement) but on the same scale. */
+  font-size: clamp(2.1rem, 1.4rem + 2.6vw, 3.6rem);
+  line-height: 1.06;
   letter-spacing: var(--tracking-display);
 }
 
@@ -54,6 +55,14 @@
   color: var(--border-strong);
   opacity: 0.35;
   pointer-events: none;
+  /* Only shown where there's empty space for it; on narrower screens it sat behind the heading. */
+  display: none;
+}
+
+@media (min-width: 1600px) {
+  .mark {
+    display: block;
+  }
 }
 
 .mark rect:last-child {

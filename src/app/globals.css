@@ -11,7 +11,7 @@
     var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
-  --fs-display: clamp(2.6rem, 1.15rem + 5.6vw, 5.5rem);
+  --fs-display: clamp(2.5rem, 1.2rem + 4.2vw, 4.75rem);
   --fs-h1: clamp(2.25rem, 1.3rem + 3.6vw, 4rem);
   --fs-h2: clamp(1.95rem, 1.35rem + 2.4vw, 3.25rem);
   --fs-h3: clamp(1.15rem, 1.05rem + 0.4vw, 1.375rem);
@@ -176,6 +176,9 @@ h4 {
   line-height: var(--lh-snug);
   letter-spacing: var(--tracking-heading);
   text-wrap: balance;
+  /* Long words (German compounds, etc.) break instead of widening the page on small screens. */
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 p {

@@ -1,6 +1,12 @@
 .showcase {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
+}
+
+/* Grid items default to min-width:auto, which let the scrolling tab strip widen the page. */
+.showcase > * {
+  min-width: 0;
 }
 
 @media (min-width: 1100px) {

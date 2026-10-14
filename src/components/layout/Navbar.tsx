@@ -102,7 +102,7 @@ export function Navbar({ locale, links, t, common, email }: NavbarProps) {
       }
     };
 
-    const desktop = window.matchMedia('(min-width: 960px)');
+    const desktop = window.matchMedia('(min-width: 1180px)');
     const onResize = () => desktop.matches && setOpen(false);
 
     document.addEventListener('keydown', onKeyDown);

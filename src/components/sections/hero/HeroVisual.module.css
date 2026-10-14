@@ -193,7 +193,7 @@
 }
 
 .codePanel {
-  left: -6%;
+  left: 0;
   top: 1%;
   width: 41%;
   transform: translate3d(calc(var(--px) * 14px), calc(var(--py) * 14px), 0);
@@ -201,7 +201,7 @@
 }
 
 .deployPanel {
-  right: -6%;
+  right: 0;
   top: 76%;
   width: 34%;
   padding: 0.75rem 0.85rem;

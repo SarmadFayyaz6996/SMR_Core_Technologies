@@ -4,7 +4,6 @@
   flex-direction: column;
   gap: var(--space-3);
   padding: clamp(var(--space-6), 2.4vw, var(--space-8));
-  min-height: 17rem;
   background: var(--bg);
   isolation: isolate;
   overflow: hidden;
@@ -142,10 +141,6 @@
 
   .top {
     margin-bottom: var(--space-5);
-  }
-
-  .card {
-    min-height: 0;
   }
 }
 

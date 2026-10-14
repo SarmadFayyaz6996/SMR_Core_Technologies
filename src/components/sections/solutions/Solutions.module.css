@@ -81,11 +81,14 @@
 }
 
 /* ---------- Responsive bento (kept last so it overrides base rules) ---------- */
+/* Tablet: two columns with the first and last cards full width (1 / 2+2 / 2+2 / 1),
+   so no card is left alone next to an empty slot. */
 @media (min-width: 720px) {
   .bento {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .card0,
   .card5 {
     grid-column: 1 / -1;
   }

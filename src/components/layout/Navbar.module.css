@@ -245,8 +245,9 @@
   font-size: var(--fs-small);
 }
 
-/* ---------- Desktop (kept last so it overrides mobile defaults) ---------- */
-@media (min-width: 960px) {
+/* ---------- Desktop (kept last so it overrides mobile defaults) ----------
+   1180px: the full menu fits in every language (German/French labels are long). */
+@media (min-width: 1180px) {
   .desktopNav {
     display: block;
   }

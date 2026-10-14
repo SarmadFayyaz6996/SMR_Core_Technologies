@@ -83,6 +83,7 @@
 .capText {
   display: grid;
   gap: 0.1rem;
+  min-width: 0;
 }
 
 .capName {
@@ -101,6 +102,12 @@
 @media (min-width: 1024px) {
   .capSummary {
     display: block;
+  }
+
+  /* In the two-column grid, long translated names wrap instead of overflowing. */
+  .capName {
+    white-space: normal;
+    line-height: 1.3;
   }
 }
 

@@ -1,3 +1,5 @@
+/* 10 industries: 2 columns (5 rows) up to tablet, 5 columns (2 rows) on desktop —
+   both divide evenly, so no card is left alone on a row. */
 .grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -6,12 +8,11 @@
 
 @media (min-width: 768px) {
   .grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-4);
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1100px) {
   .grid {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
