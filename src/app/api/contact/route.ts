@@ -35,6 +35,22 @@ async function postToWebhook(url: string, data: ContactPayload) {
   if (!res.ok) throw new Error(`Webhook responded with ${res.status}`);
 }
 
+/**
+ * Delivery status check: open /api/contact in a browser to confirm the server can see
+ * its email settings. Reports only true/false — never the values themselves.
+ */
+export function GET() {
+  return NextResponse.json(
+    {
+      emailConfigured: isEmailConfigured(),
+      webhookConfigured: Boolean(process.env.CONTACT_WEBHOOK_URL),
+      toEmailSet: Boolean(process.env.CONTACT_TO_EMAIL),
+      fromEmailSet: Boolean(process.env.CONTACT_FROM_EMAIL),
+    },
+    { headers: { 'Cache-Control': 'no-store' } },
+  );
+}
+
 export async function POST(request: Request) {
   let body: unknown;
   try {
@@ -76,9 +92,13 @@ export async function POST(request: Request) {
 
   const results = await Promise.allSettled(deliveries);
   const failed = results.filter((r) => r.status === 'rejected');
-  failed.forEach((r) =>
-    console.error('Contact delivery failed', (r as PromiseRejectedResult).reason),
-  );
+  // Log the message text explicitly — Cloudflare's log viewer shows only the stack for Error objects.
+  failed.forEach((r) => {
+    const reason = (r as PromiseRejectedResult).reason;
+    console.error(
+      `Contact delivery failed: ${reason instanceof Error ? reason.message : String(reason)}`,
+    );
+  });
 
   // Success if at least one channel delivered the lead.
   if (failed.length === results.length) {
