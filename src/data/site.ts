@@ -17,12 +17,20 @@ export const site = {
   email: 'info@smrcoretechnologies.com',
   /** Raster logo (search engines don't accept SVG logos in structured data). */
   logo: '/logo.png',
+  /** Founder & CEO — reachable directly on WhatsApp. */
+  ceo: {
+    name: 'Sarmad Fayyaz',
+    phone: '+33 7 66 96 20 82',
+    whatsapp: 'https://wa.me/33766962082',
+  },
   /**
    * Official profiles. Leave a value empty until the profile exists — empty entries are
    * hidden from the footer and left out of structured data (fake links hurt trust).
    */
   social: {
-    linkedin: process.env.NEXT_PUBLIC_LINKEDIN_URL ?? '',
+    linkedin:
+      process.env.NEXT_PUBLIC_LINKEDIN_URL ||
+      'https://www.linkedin.com/company/smr-core-technologies/',
     github: process.env.NEXT_PUBLIC_GITHUB_URL ?? '',
     x: process.env.NEXT_PUBLIC_X_URL ?? '',
   },

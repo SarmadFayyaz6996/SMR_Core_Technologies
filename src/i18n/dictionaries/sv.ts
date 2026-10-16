@@ -754,6 +754,7 @@ export const sv: Dictionary = {
       },
     ],
     preferEmail: 'Föredrar du e-post?',
+    whatsappCeo: 'Eller chatta direkt med vår vd, {name}, på WhatsApp',
     expertMessage: 'Jag vill gärna prata med en expert om ',
     form: {
       fullName: 'Fullständigt namn',

@@ -747,6 +747,7 @@ export const tr: Dictionary = {
       { title: 'Net teklif', text: 'Kapsam, mimari, zaman planı ve şeffaf bir maliyet tahmini.' },
     ],
     preferEmail: 'E-postayı mı tercih edersiniz?',
+    whatsappCeo: 'Ya da CEO’muz {name} ile doğrudan WhatsApp’tan yazışın',
     expertMessage: 'Şu konuda bir uzmanla görüşmek istiyorum: ',
     form: {
       fullName: 'Ad soyad',

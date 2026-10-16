@@ -4,6 +4,7 @@ import { ContactForm } from '@/components/contact/ContactForm';
 import { Icon } from '@/components/ui/Icon';
 import { getBudgetOptions, getProjectTypeOptions, projectTypeValues } from '@/data/projectOptions';
 import { site } from '@/data/site';
+import { format } from '@/i18n/format';
 import { getDictionary, getLocale } from '@/i18n/server';
 import { buildMetadata } from '@/lib/seo';
 import styles from './page.module.css';
@@ -59,6 +60,16 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               <a href={`mailto:${site.email}`} className={styles.email}>
                 <Icon name="mail" size={18} />
                 {site.email}
+              </a>
+              <p className={styles.whatsappLabel}>{format(t.whatsappCeo, { name: site.ceo.name })}</p>
+              <a
+                href={site.ceo.whatsapp}
+                className={styles.email}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Icon name="whatsapp" size={18} />
+                {site.ceo.phone}
               </a>
             </div>
           </aside>

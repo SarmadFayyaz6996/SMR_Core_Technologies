@@ -815,6 +815,7 @@ export const fr: Dictionary = {
       },
     ],
     preferEmail: "Vous préférez l'e-mail ?",
+    whatsappCeo: 'Ou échangez directement avec notre CEO, {name}, sur WhatsApp',
     expertMessage: "J'aimerais échanger avec un expert au sujet de ",
     form: {
       fullName: 'Nom complet',

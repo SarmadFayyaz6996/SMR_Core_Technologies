@@ -783,6 +783,7 @@ export const es: Dictionary = {
       },
     ],
     preferEmail: '¿Prefieres el correo electrónico?',
+    whatsappCeo: 'O habla directamente con nuestro CEO, {name}, por WhatsApp',
     expertMessage: 'Me gustaría hablar con un experto sobre ',
     form: {
       fullName: 'Nombre completo',

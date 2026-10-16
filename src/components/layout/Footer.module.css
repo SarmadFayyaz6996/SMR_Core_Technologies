@@ -50,6 +50,11 @@
   line-height: 1.45;
 }
 
+.contactLinks {
+  display: grid;
+  gap: var(--space-3);
+}
+
 .email {
   display: inline-flex;
   align-items: center;

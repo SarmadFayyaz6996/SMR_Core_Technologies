@@ -80,6 +80,10 @@
   border-color: var(--accent);
 }
 
+.whatsappLabel {
+  margin-top: var(--space-3);
+}
+
 .formCard {
   padding: clamp(var(--space-6), 4vw, var(--space-10));
   border-radius: var(--radius-xl);

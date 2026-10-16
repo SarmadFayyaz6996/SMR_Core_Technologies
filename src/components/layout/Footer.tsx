@@ -32,10 +32,22 @@ export async function Footer() {
               <span>{site.name}</span>
             </LocaleLink>
             <p className={styles.tagline}>{dict.common.tagline}</p>
-            <a href={`mailto:${site.email}`} className={styles.email}>
-              <Icon name="mail" size={16} />
-              {site.email}
-            </a>
+            <div className={styles.contactLinks}>
+              <a href={`mailto:${site.email}`} className={styles.email}>
+                <Icon name="mail" size={16} />
+                {site.email}
+              </a>
+              <a
+                href={site.ceo.whatsapp}
+                className={styles.email}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={format(dict.contact.whatsappCeo, { name: site.ceo.name })}
+              >
+                <Icon name="whatsapp" size={16} />
+                {site.ceo.phone}
+              </a>
+            </div>
           </div>
 
           <nav aria-label={t.navLabel} className={styles.columns}>

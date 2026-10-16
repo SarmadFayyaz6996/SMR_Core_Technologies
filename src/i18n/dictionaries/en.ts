@@ -738,6 +738,7 @@ export const en = {
       },
     ],
     preferEmail: 'Prefer email?',
+    whatsappCeo: 'Or chat directly with our CEO, {name}, on WhatsApp',
     expertMessage: "I'd like to talk to an expert about ",
     form: {
       fullName: 'Full name',
