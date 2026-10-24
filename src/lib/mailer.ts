@@ -26,8 +26,12 @@ interface LeadContext {
  * "Reply" in the mail client answers the visitor directly (reply_to).
  */
 export async function sendLeadEmail(lead: ContactPayload, context: LeadContext = {}) {
-  const apiKey = process.env.RESEND_API_KEY;
+  // Tolerate stray whitespace/quotes picked up when pasting the secret into a dashboard.
+  const apiKey = process.env.RESEND_API_KEY?.trim().replace(/^["']|["']$/g, '');
   if (!apiKey) throw new Error('RESEND_API_KEY is not set');
+  if (!apiKey.startsWith('re_')) {
+    throw new Error('RESEND_API_KEY does not look like a Resend key (it should start with "re_")');
+  }
 
   const to = process.env.CONTACT_TO_EMAIL || site.email;
   const from =
