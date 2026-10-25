@@ -12,5 +12,12 @@ export default defineConfig([
       'no-console': ['error', { allow: ['error'] }],
     },
   },
-  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
+  globalIgnores([
+    '.next/**',
+    '.open-next/**',
+    '.wrangler/**',
+    'out/**',
+    'build/**',
+    'next-env.d.ts',
+  ]),
 ]);

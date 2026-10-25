@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Must match the existing Worker so deploys update it (and keep its domain and secrets).
+  "name": "smr-core-technologies",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  "services": [
+    {
+      // Lets the Worker call itself (used by OpenNext for internal requests).
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "smr-core-technologies",
+    },
+  ],
+  // Keep the variables set in the Cloudflare dashboard (e.g. CONTACT_TO_EMAIL) on deploy.
+  // Secrets such as RESEND_API_KEY are always kept.
+  "keep_vars": true,
+  "observability": {
+    "enabled": true,
+  },
+}

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { PageHero } from '@/components/layout/PageHero';
 import { ContactForm } from '@/components/contact/ContactForm';
 import { Icon } from '@/components/ui/Icon';
-import { getBudgetOptions, getProjectTypeOptions, projectTypeValues } from '@/data/projectOptions';
+import { getBudgetOptions, getProjectTypeOptions } from '@/data/projectOptions';
 import { site } from '@/data/site';
 import { format } from '@/i18n/format';
 import { getDictionary, getLocale } from '@/i18n/server';
@@ -19,18 +19,11 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-interface ContactPageProps {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}
-
-export default async function ContactPage({ searchParams }: ContactPageProps) {
-  const [params, dict] = await Promise.all([searchParams, getDictionary()]);
+// The page is pre-rendered per language. Query parameters (?type=, ?topic=) are read by
+// ContactForm in the browser, so reading them here doesn't force a render on every request.
+export default async function ContactPage() {
+  const dict = await getDictionary();
   const t = dict.contact;
-  const type = typeof params.type === 'string' ? params.type : '';
-  const initial = {
-    projectType: (projectTypeValues as readonly string[]).includes(type) ? type : '',
-    message: params.topic === 'expert' ? t.expertMessage : '',
-  };
 
   return (
     <>
@@ -61,7 +54,9 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
                 <Icon name="mail" size={18} />
                 {site.email}
               </a>
-              <p className={styles.whatsappLabel}>{format(t.whatsappCeo, { name: site.ceo.name })}</p>
+              <p className={styles.whatsappLabel}>
+                {format(t.whatsappCeo, { name: site.ceo.name })}
+              </p>
               <a
                 href={site.ceo.whatsapp}
                 className={styles.email}
@@ -75,7 +70,6 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           </aside>
           <div className={styles.formCard}>
             <ContactForm
-              initial={initial}
               t={t}
               projectTypes={getProjectTypeOptions(dict)}
               budgets={getBudgetOptions(dict)}

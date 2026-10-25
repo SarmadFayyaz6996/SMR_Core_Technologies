@@ -1,7 +1,15 @@
 'use client';
 
-import { useId, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react';
-import type { Option } from '@/data/projectOptions';
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type ReactNode,
+} from 'react';
+import { projectTypeValues, type Option } from '@/data/projectOptions';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import type { Dictionary } from '@/i18n/dictionaries/en';
@@ -34,17 +42,28 @@ const FIELD_ORDER: ContactField[] = [
 ];
 
 interface ContactFormProps {
-  initial?: Partial<ContactPayload>;
   t: Dictionary['contact'];
   projectTypes: Option[];
   budgets: Option[];
 }
 
-export function ContactForm({ initial, t, projectTypes, budgets: budgetRanges }: ContactFormProps) {
+export function ContactForm({ t, projectTypes, budgets: budgetRanges }: ContactFormProps) {
   const f = t.form;
   const id = useId();
   const formRef = useRef<HTMLFormElement>(null);
-  const [values, setValues] = useState<ContactPayload>({ ...emptyContact, ...initial });
+  const [values, setValues] = useState<ContactPayload>(emptyContact);
+
+  // Pre-fill from links like /contact?type=ai-integration or /contact?topic=expert.
+  // Read in the browser so the page itself stays pre-rendered (no per-request rendering).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const type = params.get('type') ?? '';
+    const prefill: Partial<ContactPayload> = {};
+    if ((projectTypeValues as readonly string[]).includes(type)) prefill.projectType = type;
+    if (params.get('topic') === 'expert') prefill.message = t.expertMessage;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time sync from the URL
+    if (Object.keys(prefill).length > 0) setValues((v) => ({ ...v, ...prefill }));
+  }, [t.expertMessage]);
   const [touched, setTouched] = useState<Partial<Record<ContactField, boolean>>>({});
   const [status, setStatus] = useState<Status>('idle');
   const [serverError, setServerError] = useState('');

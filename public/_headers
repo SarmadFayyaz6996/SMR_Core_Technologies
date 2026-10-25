@@ -1,0 +1,4 @@
+# Workers Static Assets headers. Build output under /_next/static has content hashes
+# in its file names, so it can be cached forever.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
